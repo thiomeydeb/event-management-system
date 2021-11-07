@@ -16,18 +16,6 @@ class UserPasswordHistoryService {
         this.userPasswordHistoryRepository = userPasswordHistoryRepository
     }
 
-    void addUserPasswordHistory (UserPasswordHistory userPasswordHistory){
-        userPasswordHistoryRepository.save(userPasswordHistory)
-    }
-
-    void updateUserPasswordHistory(UserPasswordHistory userPasswordHistory){
-        userPasswordHistoryRepository.save(userPasswordHistory)
-    }
-
-    void updateStatus(Long id, boolean status){
-        userPasswordHistoryRepository.updateUserPasswordHistoryStatus(id, status)
-    }
-
     void getAllUserPasswordHistory(){
         userPasswordHistoryRepository.findAll()
     }

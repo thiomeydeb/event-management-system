@@ -3,9 +3,8 @@ package com.poosh.event.management.eventype;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-//http:localhost:8080/api/v1/event-type/1
-
-@RestController("api/v1/event-type")
+@RestController()
+@RequestMapping("api/v1/event-type")
 public class EventTypeController {
 
     private final EventTypeService eventTypeService;

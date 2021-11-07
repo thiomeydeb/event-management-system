@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventTypeRepository extends CrudRepository<EventType, Long> {
-
-    /*@Modifying
-    @Query("UPDATE EventType et SET et.isActive = ?2 WHERE et.id = ?1")*/
-    void updateEventPlannerAllocationStatus(Long id, boolean status);
-
-
+    @Modifying
+    @Query("UPDATE EvenType et SET et.isActive = ?2 WHERE et.id = ?1")
+    void updateEventTypeStatus(Long id, boolean status);
 }

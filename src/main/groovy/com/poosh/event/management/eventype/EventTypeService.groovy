@@ -22,7 +22,7 @@ public class EventTypeService {
     }
 
     void updateStatus(Long id, boolean status){
-        eventTypeRepository.updateEventStatus(id, status)
+        eventTypeRepository.updateEventTypeStatus(id, status)
     }
 
     void getAllEvents(){

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("api/v1/login-log")
 public class UserLoginLogController {
 
     private final UserLoginLogService userLoginLogService;
@@ -24,10 +25,5 @@ public class UserLoginLogController {
     @GetMapping("/{id}")
     public Object getUserLoginLogById(@PathVariable("id") Long id){
         return userLoginLogService.getUserLoginLogById(id);
-    }
-
-    @PostMapping
-    public void addUserLoginLog(@RequestBody UserLoginLog body){
-        userLoginLogService.addUserLoginLog(body);
     }
 }

@@ -47,7 +47,7 @@ public class BookedEvent {
             name = "client_id",
             nullable = false,
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "User_booked_event_fk")
+            foreignKey = @ForeignKey(name = "user_booked_event_fk")
     )
     private Users User;
 

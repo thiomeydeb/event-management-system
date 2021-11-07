@@ -32,6 +32,13 @@ public class AdminRole {
     )
     private String name;
 
+    @Column(
+            name = "is_active",
+            nullable = false,
+            columnDefinition = "BOOLEAN DEFAULT TRUE"
+    )
+    private Boolean isActive;
+
     public AdminRole(){
 
     }
@@ -53,5 +60,13 @@ public class AdminRole {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

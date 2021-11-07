@@ -32,6 +32,13 @@ public class ProviderCategory {
     )
     private String name;
 
+    @Column(
+            name = "is_active",
+            nullable = false,
+            columnDefinition = "BOOLEAN DEFAULT TRUE"
+    )
+    private Boolean isActive;
+
     public ProviderCategory(){
 
     }
@@ -54,5 +61,13 @@ public class ProviderCategory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

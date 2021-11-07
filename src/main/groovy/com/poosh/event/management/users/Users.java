@@ -28,21 +28,21 @@ public class Users {
             nullable = false,
             columnDefinition = "VARCHAR(100)"
     )
-    private String first_name;
+    private String firstName;
 
     @Column(
             name = "middle_name",
             nullable = false,
             columnDefinition = "VARCHAR(100)"
     )
-    private String middle_name;
+    private String middleName;
 
     @Column(
             name = "last_name",
             nullable = false,
             columnDefinition = "VARCHAR(100)"
     )
-    private String last_name;
+    private String lastName;
 
     @Column(
             name = "password",
@@ -63,21 +63,21 @@ public class Users {
             nullable = false,
             columnDefinition = "VARCHAR(30)"
     )
-    private String phone_number;
+    private String phoneNumber;
 
     @Column(
             name = "identification_type",
             nullable = false,
             columnDefinition = "VARCHAR(100)"
     )
-    private String identification_type;
+    private String identificationType;
 
     @Column(
             name = "identification_number",
             nullable = false,
             columnDefinition = "VARCHAR(100)"
     )
-    private String identification_number;
+    private String identificationNumber;
 
     @Column(
             name = "is_active",
@@ -91,34 +91,33 @@ public class Users {
             nullable = false,
             columnDefinition = "VARCHAR(256)"
     )
-    private String company_name;
+    private String companyName;
 
     public Users(){
     }
     public Users(
-            String first_name,
-            String middle_name,
-            String last_name,
+            String firstName,
+            String middleName,
+            String lastName,
             String password,
             String email,
-            String phone_number,
-            String identification_type,
-            String identification_number,
+            String phoneNumber,
+            String identificationType,
+            String identificationNumber,
             Boolean isActive,
-            String company_name) {
+            String companyName) {
 
-        this.first_name = first_name;
-        this.middle_name = middle_name;
-        this.last_name = last_name;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
         this.password = password;
         this.email = email;
-        this.phone_number = phone_number;
-        this.identification_type = identification_type;
-        this.identification_number = identification_number;
+        this.phoneNumber = phoneNumber;
+        this.identificationType = identificationType;
+        this.identificationNumber = identificationNumber;
         this.isActive = isActive;
-        this.company_name = company_name;
+        this.companyName = companyName;
     }
-
 
     public Integer getId() {
         return id;
@@ -128,28 +127,28 @@ public class Users {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getMiddle_name() {
-        return middle_name;
+    public String getMiddleName() {
+        return middleName;
     }
 
-    public void setMiddle_name(String middle_name) {
-        this.middle_name = middle_name;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassword() {
@@ -168,28 +167,28 @@ public class Users {
         this.email = email;
     }
 
-    public String getPhone_number() {
-        return phone_number;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhone_number(String phone_number) {
-        this.phone_number = phone_number;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public String getIdentification_type() {
-        return identification_type;
+    public String getIdentificationType() {
+        return identificationType;
     }
 
-    public void setIdentification_type(String identification_type) {
-        this.identification_type = identification_type;
+    public void setIdentificationType(String identificationType) {
+        this.identificationType = identificationType;
     }
 
-    public String getIdentification_number() {
-        return identification_number;
+    public String getIdentificationNumber() {
+        return identificationNumber;
     }
 
-    public void setIdentification_number(String identification_number) {
-        this.identification_number = identification_number;
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
     }
 
     public Boolean getActive() {
@@ -200,11 +199,11 @@ public class Users {
         isActive = active;
     }
 
-    public String getCompany_name() {
-        return company_name;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCompany_name(String company_name) {
-        this.company_name = company_name;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 }

@@ -5,7 +5,8 @@ import com.poosh.event.management.eventype.EventTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("")
+@RestController()
+@RequestMapping("api/v1/provider")
 public class ProviderController {
 
     private final ProviderService providerService;

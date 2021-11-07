@@ -15,18 +15,6 @@ class UserLoginLogService {
         this.userLoginLogRepository = userLoginLogRepository
     }
 
-    void addUserLoginLog (UserLoginLog userLoginLog){
-        userLoginLogRepository.save(userLoginLog)
-    }
-
-    void updateUserLoginLog (UserLoginLog userLoginLog){
-        userLoginLogRepository.save(userLoginLog)
-    }
-
-    void updateStatus(Long id, boolean status){
-        userLoginLogRepository.updateUserLoginLogStatus(id, status)
-    }
-
     void getAllUserLoginLog(){
         userLoginLogRepository.findAll()
     }

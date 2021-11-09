@@ -3,7 +3,7 @@ package com.poosh.event.management.eventype;
 import javax.persistence.*;
 import java.util.Locale;
 
-@Entity( name = "EvenType")
+@Entity( name = "EventType")
 @Table( name = "event_type")
 
 public class EventType {

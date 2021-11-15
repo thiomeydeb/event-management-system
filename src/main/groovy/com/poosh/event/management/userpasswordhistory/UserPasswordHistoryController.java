@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("api/v1/password-history")
 public class UserPasswordHistoryController {
 
     private final UserPasswordHistoryService userPasswordHistoryServices;
@@ -24,10 +25,5 @@ public class UserPasswordHistoryController {
     @GetMapping("/{id}")
     public Object getUserPasswordHistoryById(@PathVariable("id") Long id){
         return userPasswordHistoryServices.getUserPasswordHistoryById(id);
-    }
-
-    @PostMapping
-    public void addUserPasswordHistory(@RequestBody UserPasswordHistory body){
-        userPasswordHistoryServices.addUserPasswordHistory(body);
     }
 }

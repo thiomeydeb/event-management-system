@@ -20,7 +20,7 @@ class BookedEventService {
     void updateBookedEvent(BookedEvent bookedEvent){
         bookedEventRepository.save(bookedEvent)
     }
-    void updateStatus(Long id, boolean status){
+    void updateStatus(Long id, int status){
         bookedEventRepository.updateBookedEventStatus(id, status)
     }
 

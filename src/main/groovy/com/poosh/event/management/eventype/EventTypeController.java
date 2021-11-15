@@ -27,7 +27,7 @@ public class EventTypeController {
     }
 
     @GetMapping("{id}")
-    public BaseApiResponse getEventTypeById(@PathVariable("id") Long id){
+    public BaseApiResponse getEventTypeById(@PathVariable("id") @Min(1) Long id){
         return eventTypeService.getEventTypeById(id);
     }
 

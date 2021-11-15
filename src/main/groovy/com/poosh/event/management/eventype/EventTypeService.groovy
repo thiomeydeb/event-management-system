@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EventTypeService {
+class EventTypeService {
 
     private final EventTypeRepository eventTypeRepository
     private final ModelMapper modelMapper

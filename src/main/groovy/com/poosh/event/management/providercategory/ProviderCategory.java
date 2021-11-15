@@ -23,7 +23,7 @@ public class ProviderCategory {
             nullable = false,
             updatable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "title",
@@ -47,11 +47,11 @@ public class ProviderCategory {
         this.name = name;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

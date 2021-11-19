@@ -1,20 +1,20 @@
-package com.poosh.event.management.venues;
+package com.poosh.event.management.venue;
 
 import javax.persistence.*;
 
-@Entity(name = "Venues")
-@Table(name = "venues")
+@Entity(name = "Venue")
+@Table(name = "venue")
 
-public class Venues {
+public class Venue {
 
     @SequenceGenerator(
-            name= "venues_sequence",
-            sequenceName = "venues_sequence",
+            name= "venue_sequence",
+            sequenceName = "venue_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "venues_sequence"
+            generator = "venue_sequence"
     )
     @Id
     @Column(
@@ -22,11 +22,12 @@ public class Venues {
             updatable = false,
             nullable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name ="name",
             updatable = false,
+            nullable = false,
             columnDefinition = "VARCHAR(50)"
     )
     private String name;
@@ -41,6 +42,7 @@ public class Venues {
     @Column(
             name ="is_active",
             updatable = false,
+            nullable = false,
             columnDefinition = "BOOLEAN DEFAULT TRUE"
     )
     private Boolean isActive;
@@ -48,14 +50,15 @@ public class Venues {
     @Column(
             name ="amount",
             updatable = false,
+            nullable = false,
             columnDefinition = "DOUBLE PRECISION"
     )
     private Double amount;
 
-    public Venues(){
+    public Venue(){
 
     }
-    public Venues (
+    public Venue(
             String name,
             String location,
             Boolean isActive,
@@ -66,11 +69,11 @@ public class Venues {
         this.amount = amount;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

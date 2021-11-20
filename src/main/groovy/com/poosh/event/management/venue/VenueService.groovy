@@ -2,6 +2,7 @@ package com.poosh.event.management.venue
 
 import com.poosh.event.management.apiresponse.BaseApiResponse
 import com.poosh.event.management.exceptions.BadRequestException
+import com.poosh.event.management.exceptions.InternalServerErrorException
 import com.poosh.event.management.venue.dto.VenueCreateDto
 import com.poosh.event.management.venue.dto.VenueUpdateDto
 import org.modelmapper.ModelMapper
@@ -133,11 +134,18 @@ class VenueService {
             //set new status
             venue.setActive(status)
 
+            //save new status
+            def intUpdate = venueRepository.updateVenueStatus(venueId, status)
+            if(intUpdate != 1){
+                throw new InternalServerErrorException(String.format("Failed to update status for venue with id %s", venueId))
+            }
+            res.data = venue
+
             //perform update by saving using venueRepository
-            def updatedVenue = venueRepository.save(venue)
+            //def updatedVenue = venueRepository.save(venue)
 
             //assign updated venue details to response data field
-            res.data = updatedVenue
+            //res.data = updatedVenue
         } else {
             //throw
             throw new BadRequestException(String.format("record with id %s not found", venueId), [])

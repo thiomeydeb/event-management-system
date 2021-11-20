@@ -26,7 +26,6 @@ public class Venue {
 
     @Column(
             name ="name",
-            updatable = false,
             nullable = false,
             columnDefinition = "VARCHAR(50)"
     )
@@ -34,14 +33,12 @@ public class Venue {
 
     @Column(
             name ="location",
-            updatable = false,
             columnDefinition = "VARCHAR(100)"
     )
     private String location;
 
     @Column(
             name ="is_active",
-            updatable = false,
             nullable = false,
             columnDefinition = "BOOLEAN DEFAULT TRUE"
     )
@@ -49,7 +46,6 @@ public class Venue {
 
     @Column(
             name ="amount",
-            updatable = false,
             nullable = false,
             columnDefinition = "DOUBLE PRECISION"
     )

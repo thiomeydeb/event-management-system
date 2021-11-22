@@ -1,6 +1,9 @@
 package com.poosh.event.management.providercategory;
 
+import com.poosh.event.management.provider.Provider;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "ProviderCategory")
 @Table(name = "provider_category")
@@ -39,6 +42,13 @@ public class ProviderCategory {
     )
     private Boolean isActive;
 
+    @OneToMany(
+            mappedBy = "providerCategory",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    )
+    private List<Provider> providerList;
+
     public ProviderCategory(){
 
     }
@@ -70,4 +80,5 @@ public class ProviderCategory {
     public void setActive(Boolean active) {
         isActive = active;
     }
+
 }

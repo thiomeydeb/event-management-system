@@ -1,10 +1,12 @@
-package com.poosh.event.management.providers;
+package com.poosh.event.management.provider;
 
+
+import com.poosh.event.management.providercategory.ProviderCategory;
 
 import javax.persistence.*;
 
 @Entity(name = "Provider")
-@Table(name = "Provider")
+@Table(name = "provider")
 public class Provider {
 
     @SequenceGenerator(
@@ -24,7 +26,7 @@ public class Provider {
             nullable = false,
             updatable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "title",
@@ -33,12 +35,13 @@ public class Provider {
     )
     private String title;
 
-    @Column(
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(
             name = "category_id",
-            nullable = false,
-            columnDefinition = "BIGINT"
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey( name = "provider_category_provider_fk")
     )
-    private Integer category_id;
+    private ProviderCategory providerCategory;
 
     @Column(
             name = "cost",
@@ -57,18 +60,26 @@ public class Provider {
     public Provider(){
 
     }
-    public Provider(String title, Integer category_id, Double cost, Boolean isActive) {
+    public Provider(String title, Double cost, Boolean isActive, ProviderCategory providerCategory) {
         this.title = title;
-        this.category_id = category_id;
         this.cost = cost;
         this.isActive = isActive;
+        this.providerCategory = providerCategory;
     }
 
-    public Integer getId() {
+    public Provider(Long id, String title, Double cost, Boolean isActive, ProviderCategory providerCategory) {
+        this.id = id;
+        this.title = title;
+        this.cost = cost;
+        this.isActive = isActive;
+        this.providerCategory = providerCategory;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,14 +89,6 @@ public class Provider {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Integer getCategory_id() {
-        return category_id;
-    }
-
-    public void setCategory_id(Integer category_id) {
-        this.category_id = category_id;
     }
 
     public Double getCost() {
@@ -102,5 +105,13 @@ public class Provider {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public ProviderCategory getProviderCategory() {
+        return providerCategory;
+    }
+
+    public void setProviderCategory(ProviderCategory providerCategory) {
+        this.providerCategory = providerCategory;
     }
 }

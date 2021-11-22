@@ -35,7 +35,7 @@ public class Provider {
     )
     private String title;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(
             name = "category_id",
             referencedColumnName = "id",
@@ -61,6 +61,14 @@ public class Provider {
 
     }
     public Provider(String title, Double cost, Boolean isActive, ProviderCategory providerCategory) {
+        this.title = title;
+        this.cost = cost;
+        this.isActive = isActive;
+        this.providerCategory = providerCategory;
+    }
+
+    public Provider(Long id, String title, Double cost, Boolean isActive, ProviderCategory providerCategory) {
+        this.id = id;
         this.title = title;
         this.cost = cost;
         this.isActive = isActive;

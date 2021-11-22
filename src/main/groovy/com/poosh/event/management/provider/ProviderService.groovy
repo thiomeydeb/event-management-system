@@ -64,9 +64,11 @@ class ProviderService {
          *if a record is not present throw an exception
          *if a record is present, update the provider category details
         */
+        def providerCategory = null
         if (optionalProvider.isPresent()) {
             //retrieve provider from optionalProvider
             def provider = optionalProvider.get()
+            providerCategory = provider.getProviderCategory()
 
             if(body.categoryId){
                 //check provider category
@@ -75,14 +77,26 @@ class ProviderService {
                 if(!optionalProviderCategory.isPresent()){
                     throw new InternalServerErrorException(String.format("Provider category with id %s does not exist", body.categoryId), [])
                 }
-                body.providerCategory = optionalProviderCategory.get()
+                //body.providerCategory = optionalProviderCategory.get()
+                providerCategory = optionalProviderCategory.get()
             }
 
             //map request body (ProviderUpdateDto) to provider (Provider entity)
             modelMapper.map(body, provider)
+            provider.setProviderCategory(providerCategory)
+            provider.setId(providerId)
 
             //perform update by saving using providerRepository
             def updatedProvider = providerRepository.save(provider)
+            /*def intUpdateProvider = providerRepository.updateProvider(
+                    providerId,
+                    body.title,
+                    body.cost,
+                    body.categoryId
+            )
+            if(intUpdateProvider != 1){
+                throw new InternalServerErrorException(String.format("Failed to update provider with id %s", providerId), [])
+            }*/
 
             //assign updated provider details to response data field
             res.data = updatedProvider

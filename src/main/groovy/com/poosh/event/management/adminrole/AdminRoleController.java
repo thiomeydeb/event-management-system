@@ -1,7 +1,5 @@
-package com.poosh.event.management.adminroles;
+package com.poosh.event.management.adminrole;
 
-import com.poosh.event.management.eventype.EventType;
-import com.poosh.event.management.eventype.EventTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

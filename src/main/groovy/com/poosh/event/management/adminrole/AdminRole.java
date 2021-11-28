@@ -1,4 +1,4 @@
-package com.poosh.event.management.adminroles;
+package com.poosh.event.management.adminrole;
 
 import javax.persistence.*;
 

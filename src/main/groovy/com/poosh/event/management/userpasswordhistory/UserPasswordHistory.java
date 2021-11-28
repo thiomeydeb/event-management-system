@@ -24,14 +24,14 @@ public class UserPasswordHistory {
             nullable = false,
             updatable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "user_id",
             nullable = false,
             columnDefinition = "BIGINT"
     )
-    private Integer user_id;
+    private Long userId;
 
     @Column(
             name = "password",
@@ -43,39 +43,40 @@ public class UserPasswordHistory {
     @Column(
             name ="time_updated",
             nullable = false,
-            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE"
+            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"
     )
-    private LocalDate time_updated;
+    private LocalDate timeUpdated;
 
     public UserPasswordHistory(){
 
     }
 
-    public UserPasswordHistory(
-            Integer id,
-            Integer user_id,
-            String password,
-            LocalDate time_updated) {
-        this.id = id;
-        this.user_id = user_id;
+    public UserPasswordHistory(Long userId, String password) {
+        this.userId = userId;
         this.password = password;
-        this.time_updated = time_updated;
     }
 
-    public Integer getId() {
+    public UserPasswordHistory(Long id, Long userId, String password, LocalDate timeUpdated) {
+        this.id = id;
+        this.userId = userId;
+        this.password = password;
+        this.timeUpdated = timeUpdated;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getPassword() {
@@ -86,11 +87,11 @@ public class UserPasswordHistory {
         this.password = password;
     }
 
-    public LocalDate getTime_updated() {
-        return time_updated;
+    public LocalDate getTimeUpdated() {
+        return timeUpdated;
     }
 
-    public void setTime_updated(LocalDate time_updated) {
-        this.time_updated = time_updated;
+    public void setTimeUpdated(LocalDate timeUpdated) {
+        this.timeUpdated = timeUpdated;
     }
 }

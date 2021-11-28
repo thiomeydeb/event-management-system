@@ -1,4 +1,4 @@
-package com.poosh.event.management.passwordresettokens;
+package com.poosh.event.management.passwordmanagement;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -38,18 +38,18 @@ public class PasswordResetToken {
             nullable = false,
             columnDefinition = "BIGINT"
     )
-    private Integer user_id;
+    private Long userId;
 
     @Column(
-            name ="add_date",
+            name ="addDate",
             nullable = false,
-            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE"
+            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"
     )
-    private LocalDate add_date;
+    private LocalDate addDate;
 
     @Column(
             name ="is_active",
-            updatable = false,
+            nullable = false,
             columnDefinition = "BOOLEAN DEFAULT TRUE"
     )
     private Boolean isActive;
@@ -57,50 +57,16 @@ public class PasswordResetToken {
     public PasswordResetToken(){
 
     }
-    public PasswordResetToken(String token, Integer user_id, LocalDate add_date, Boolean isActive) {
+    public PasswordResetToken(String token, Long userId, Boolean isActive) {
         this.token = token;
-        this.user_id = user_id;
-        this.add_date = add_date;
+        this.userId = userId;
         this.isActive = isActive;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
+    public PasswordResetToken(String token, Long userId) {
         this.token = token;
+        this.userId = userId;
     }
 
-    public Integer getUser_id() {
-        return user_id;
-    }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
-    }
-
-    public LocalDate getAdd_date() {
-        return add_date;
-    }
-
-    public void setAdd_date(LocalDate add_date) {
-        this.add_date = add_date;
-    }
-
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
-    }
 }

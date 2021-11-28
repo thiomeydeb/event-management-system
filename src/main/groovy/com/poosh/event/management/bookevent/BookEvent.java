@@ -1,15 +1,13 @@
-package com.poosh.event.management.bookedevents;
+package com.poosh.event.management.bookevent;
 
 import com.poosh.event.management.eventype.EventType;
-import com.poosh.event.management.users.Users;
-import org.apache.tomcat.jni.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity(name = "BookedEvent")
 @Table(name = "booked_event")
-public class BookedEvent {
+public class BookEvent {
 
 
     @SequenceGenerator(
@@ -49,7 +47,7 @@ public class BookedEvent {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "user_booked_event_fk")
     )
-    private Users User;
+    private com.poosh.event.management.user.User User;
 
     @ManyToOne
     @JoinColumn(
@@ -110,10 +108,10 @@ public class BookedEvent {
     )
     private LocalDate completion_timestamp;
 
-    public BookedEvent(){
+    public BookEvent(){
     }
 
-    public BookedEvent(
+    public BookEvent(
             String title,
             Double management_amount,
             Integer status,
@@ -213,11 +211,11 @@ public class BookedEvent {
         this.eventType = eventType;
     }
 
-    public Users getUser() {
+    public com.poosh.event.management.user.User getUser() {
         return User;
     }
 
-    public void setUser(Users user) {
+    public void setUser(com.poosh.event.management.user.User user) {
         User = user;
     }
 }

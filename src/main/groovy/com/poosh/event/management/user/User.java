@@ -6,7 +6,6 @@ import javax.persistence.*;
 @Table(name = "users")
 public class User {
 
-
     @SequenceGenerator(
             name = "user_sequence",
             sequenceName = "user_sequence",

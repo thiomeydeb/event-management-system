@@ -12,6 +12,10 @@ public class InternalServerErrorException extends RuntimeException {
         this.errors = errors;
     }
 
+    public InternalServerErrorException(String message) {
+        super(message);
+    }
+
     public List<FieldErrorDto> getErrors() {
         return errors;
     }

@@ -1,11 +1,10 @@
-package com.poosh.event.management.users;
+package com.poosh.event.management.user;
 
 import javax.persistence.*;
 
-@Entity(name = "Users")
+@Entity(name = "User")
 @Table(name = "users")
-public class Users {
-
+public class User {
 
     @SequenceGenerator(
             name = "user_sequence",
@@ -93,9 +92,9 @@ public class Users {
     )
     private String companyName;
 
-    public Users(){
+    public User(){
     }
-    public Users(
+    public User(
             String firstName,
             String middleName,
             String lastName,

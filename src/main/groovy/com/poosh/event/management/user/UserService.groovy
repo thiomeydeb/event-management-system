@@ -9,6 +9,7 @@ import com.poosh.event.management.user.dto.UserUpdateDto
 import com.poosh.event.management.utils.CommonDbFunctions
 import com.poosh.event.management.utils.Constant
 import com.poosh.event.management.utils.EmailSender
+import com.poosh.event.management.utils.MyUtil
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.sql.Sql
@@ -187,7 +188,7 @@ class UserService {
 
 
 
-     getUserDetailsByEmailMap(String email){
+     def getUserDetailsByEmailMap(String email){
         Sql sql = new Sql(dataSource);
 
         def sqlParams = [email: email];
@@ -327,7 +328,7 @@ class UserService {
     BaseApiResponse demoteFromAdmin(long userId,long loggedInUser){
         Sql sql = new Sql(dataSource);
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "User demoted from to admin")
-        sql.executeUpdate("UPDATE admin_users SET is_active = FALSE WHERE user_id = ?",userId);
+        sql.executeUpdate("UPDATE admin_user SET is_active = FALSE WHERE user_id = ?",userId);
         sql.close();
 
         return res
@@ -337,7 +338,7 @@ class UserService {
         Sql sql = new Sql(dataSource);
         def sqlParams = [userId: userId, roleId: roleId, loggedInUser: loggedInUser];
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "User role allocated")
-        sql.execute("INSERT INTO user_role_allocations(user_id, role_id, allocated_by) VALUES (?.userId, ?.roleId, ?.loggedInUser)", sqlParams);
+        sql.execute("INSERT INTO user_role_allocation(user_id, role_id, allocated_by) VALUES (?.userId, ?.roleId, ?.loggedInUser)", sqlParams);
         sql.close();
 
         return res
@@ -347,7 +348,7 @@ class UserService {
         Sql sql = new Sql(dataSource);
         def params = [userId: userId, roleId: roleId];
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "User role deallocated")
-        def queryStatus = sql.execute("DELETE FROM  user_role_allocations WHERE user_id = ?.userId AND role_id = ?.roleId", params);
+        def queryStatus = sql.execute("DELETE FROM  user_role_allocation WHERE user_id = ?.userId AND role_id = ?.roleId", params);
         sql.close();
         return res
     }
@@ -428,7 +429,7 @@ class UserService {
      boolean logLoginAttempt(def ipAddress,boolean success,String email) {
         Sql sql = new Sql(dataSource);
         Map params = ["ip": ipAddress, "success": success, "email": email];
-        def insertRes = sql.executeInsert("INSERT INTO user_login_logs(ip_address, success, entered_email,login_time) VALUES (?.ip,?.success,?.email,current_timestamp)", params);
+        def insertRes = sql.executeInsert("INSERT INTO user_login_log(ip_address, success, entered_email,login_time) VALUES (?.ip,?.success,?.email,current_timestamp)", params);
         sql.close();
         return !!insertRes;
     }

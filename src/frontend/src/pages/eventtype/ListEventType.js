@@ -35,11 +35,6 @@ export default function ListEventTypeTable({ eventTypes }) {
                   {sentenceCase(row.active ? 'active' : 'inactive')}
                 </Label>
               </TableCell>
-              <TableCell>
-                <Label variant="ghost" color={(row.status === 'in-active' && 'error') || 'success'}>
-                  {sentenceCase(row.status)}
-                </Label>
-              </TableCell>
               <TableCell align="right">
                 <UserMoreMenu />
               </TableCell>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Typography, Button, Container, Card } from '@mui/material';
+import { Stack, Typography, Button, Container, Card, Snackbar, Alert } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { Link as RouterLink } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
@@ -15,7 +15,19 @@ const eventTypeUrl = 'http://localhost:8080/api/v1/event-type';
 
 export default function EventType() {
   const [viewMode, setViewMode] = useState('list');
-  const [eventTypes, setEventTypes] = useState();
+  const [alertOptions, setAlertOptions] = useState({
+    open: false,
+    severity: 'success',
+    message: 'Success'
+  });
+  const [eventTypes, setEventTypes] = useState([{}]);
+  const handleClose = () => {
+    setAlertOptions({
+      open: false,
+      severity: 'success',
+      message: 'Values fetched successfully'
+    });
+  };
   const getEventTypes = () => {
     axios
       .get(eventTypeUrl, {
@@ -27,14 +39,36 @@ export default function EventType() {
       .then((res) => {
         console.log(res);
         setEventTypes(res.data.data);
+        setAlertOptions({
+          open: true,
+          severity: 'success',
+          message: 'Values fetched successfully'
+        });
       })
       .catch((error) => {
         console.log(error.toJSON);
+        setAlertOptions({
+          open: true,
+          severity: 'error',
+          message: 'failed to fetch data'
+        });
       });
   };
   useEffect(() => {
     getEventTypes();
   }, []);
+  const Notification = () => (
+    <Snackbar
+      open={alertOptions.open}
+      autoHideDuration={6000}
+      onClose={handleClose}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+    >
+      <Alert onClose={handleClose} severity={alertOptions.severity} sx={{ width: '100%' }}>
+        {alertOptions.message}
+      </Alert>
+    </Snackbar>
+  );
   return (
     <Page title="Event Type | POSH Events">
       <Container>
@@ -67,12 +101,24 @@ export default function EventType() {
         <Card>
           <Scrollbar>
             {/* Display component based on view mode state */}
-            {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
-            {viewMode === 'list' && <ListEventType />}
-            {viewMode === 'add' && <AddEventType />}
-            {viewMode === 'edit' && <EditEventType setViewMode={setViewMode} />}
+            {viewMode === 'list' && <ListEventType eventTypes={eventTypes} />}
+            {viewMode === 'add' && (
+              <AddEventType
+                setViewMode={setViewMode}
+                setAlertOptions={setAlertOptions}
+                url={eventTypeUrl}
+              />
+            )}
+            {viewMode === 'edit' && (
+              <EditEventType
+                setViewMode={setViewMode}
+                setAlertOptions={setAlertOptions}
+                url={eventTypeUrl}
+              />
+            )}
           </Scrollbar>
         </Card>
+        <Notification />
       </Container>
     </Page>
   );

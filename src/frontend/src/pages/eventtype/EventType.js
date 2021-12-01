@@ -13,7 +13,7 @@ const eventTypeUrl = 'http://localhost:8080/api/v1/event-type';
 
 export default function EventType() {
   const [viewMode, setViewMode] = useState(true);
-  const [eventTypes, setEventTypes] = useState();
+  const [eventTypes, setEventTypes] = useState([]);
   const getEventTypes = () => {
     axios
       .get(eventTypeUrl, {

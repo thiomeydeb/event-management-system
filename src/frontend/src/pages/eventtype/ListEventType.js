@@ -6,18 +6,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { sentenceCase } from 'change-case';
+import Label from '../../components/Label';
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9)
-];
 
 export default function ListEventTypeTable({ eventTypes }) {
   return (
@@ -26,7 +20,7 @@ export default function ListEventTypeTable({ eventTypes }) {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell align="right">Status</TableCell>
+            <TableCell align="left">Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -35,7 +29,11 @@ export default function ListEventTypeTable({ eventTypes }) {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="right">{row.active ? 'active' : 'inactive'}</TableCell>
+              <TableCell align="left">
+                <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
+                  {sentenceCase(row.active ? 'active' : 'inactive')}
+                </Label>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -1,42 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Stack, Typography, Button, Container, Card } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { Link as RouterLink } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import editFill from '@iconify/icons-eva/edit-fill';
-import axios from 'axios';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import AddEventType from './AddEventType';
-import ListEventType from './ListEventType';
-import EditEventType from './EditEventType';
+import ListVenues from './ListVenues';
+import AddVenue from './AddVenue';
+import EditVenue from './EditVenue';
 
-const eventTypeUrl = 'http://localhost:8080/api/v1/event-type';
-
-export default function EventType() {
+export default function Venue() {
   const [viewMode, setViewMode] = useState('list');
-  const [eventTypes, setEventTypes] = useState();
-  const getEventTypes = () => {
-    axios
-      .get(eventTypeUrl, {
-        auth: {
-          username: 'user1',
-          password: 'user1Pass'
-        }
-      })
-      .then((res) => {
-        console.log(res);
-      });
-  };
-  useEffect(() => {
-    getEventTypes();
-  }, []);
   return (
-    <Page title="Event Type | POSH Events">
+    <Page title="Venue | POSH Events">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Event Types' : 'Add Event Type'}
+            {viewMode ? 'Venue' : 'Add Venue'}
           </Typography>
           <Button
             variant="contained"
@@ -47,7 +28,7 @@ export default function EventType() {
             startIcon={<Icon icon={editFill} />}
             onClick={() => setViewMode('edit')}
           >
-            Edit Event Type
+            Edit Venue
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Button
@@ -57,16 +38,16 @@ export default function EventType() {
             startIcon={<Icon icon={plusFill} />}
             onClick={() => setViewMode('add')}
           >
-            New Event Type
+            New Venue
           </Button>
         </Stack>
         <Card>
           <Scrollbar>
             {/* Display component based on view mode state */}
             {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
-            {viewMode === 'list' && <ListEventType />}
-            {viewMode === 'add' && <AddEventType />}
-            {viewMode === 'edit' && <EditEventType setViewMode={setViewMode} />}
+            {viewMode === 'list' && <ListVenues />}
+            {viewMode === 'add' && <AddVenue />}
+            {viewMode === 'edit' && <EditVenue setViewMode={setViewMode} />}
           </Scrollbar>
         </Card>
       </Container>

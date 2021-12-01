@@ -10,35 +10,42 @@ import { sentenceCase } from 'change-case';
 import { UserMoreMenu } from '../../components/_dashboard/user';
 import Label from '../../components/Label';
 
-function createData(name, status) {
-  return { name, status };
+function createData(category, provider, status) {
+  return { category, provider, status };
 }
 
 const rows = [
-  createData('Wedding', 'in-active'),
-  createData('Music Concert', 'active'),
-  createData('Fashion', 'in-active'),
-  createData('Cake Festival', 'active')
+  createData('Security', 'KK Security', 'Complete'),
+  createData('Catering', 'Savannah Caterings', 'Incomplete'),
+  createData('Entertainment', 'System Unit', 'Complete'),
+  createData('Design', 'Glamar Designs', 'Complete'),
+  createData('MC', 'Smile Network Ltd', 'Incomplete'),
+  createData('Venue', 'The Hub Karen', 'Incomplete')
 ];
 
-export default function ListEventTypeTable() {
+export default function EventProgressTable() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Category</TableCell>
+            <TableCell>Provider Name</TableCell>
             <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <TableRow key={row.category} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {row.category}
               </TableCell>
+              <TableCell>{row.provider}</TableCell>
               <TableCell>
-                <Label variant="ghost" color={(row.status === 'in-active' && 'error') || 'success'}>
+                <Label
+                  variant="ghost"
+                  color={(row.status === 'Incomplete' && 'error') || 'success'}
+                >
                   {sentenceCase(row.status)}
                 </Label>
               </TableCell>

@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
-export default function AddEventTypeForm({ setViewMode }) {
+export default function AddVenueForm({ setViewMode }) {
   const navigate = useNavigate();
 
-  const addEventTypeSchema = Yup.object().shape({
+  const addVenueSchema = Yup.object().shape({
     eventTypeName: Yup.string()
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
-      .required('Event type name required')
+      .required('Venue name required')
   });
 
   const formik = useFormik({
@@ -22,7 +22,7 @@ export default function AddEventTypeForm({ setViewMode }) {
       email: '',
       password: ''
     },
-    validationSchema: addEventTypeSchema,
+    validationSchema: addVenueSchema,
     onSubmit: () => {
       navigate('/dashboard', { replace: true });
     }
@@ -36,11 +36,19 @@ export default function AddEventTypeForm({ setViewMode }) {
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Event type name"
+            label="Venue name"
             margin="dense"
-            {...getFieldProps('eventTypeName')}
-            error={Boolean(touched.eventTypeName && errors.eventTypeName)}
-            helperText={touched.eventTypeName && errors.eventTypeName}
+            {...getFieldProps('venueName')}
+            error={Boolean(touched.venueName && errors.venueName)}
+            helperText={touched.venueName && errors.venueName}
+          />
+          <TextField
+            fullWidth
+            label="Location name"
+            margin="dense"
+            {...getFieldProps('LocationName')}
+            error={Boolean(touched.LocationName && errors.LocationName)}
+            helperText={touched.LocationName && errors.LocationName}
           />
           <LoadingButton
             fullWidth

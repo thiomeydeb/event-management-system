@@ -1,17 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Stack, Typography, Button, Container, Card } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { Link as RouterLink } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import editFill from '@iconify/icons-eva/edit-fill';
+import axios from 'axios';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import AddEventType from './AddEventType';
 import ListEventType from './ListEventType';
 import EditEventType from './EditEventType';
 
+const eventTypeUrl = 'http://localhost:8080/api/v1/event-type';
+
 export default function EventType() {
   const [viewMode, setViewMode] = useState('list');
+  const [eventTypes, setEventTypes] = useState();
+  const getEventTypes = () => {
+    axios
+      .get(eventTypeUrl, {
+        auth: {
+          username: 'user1',
+          password: 'user1Pass'
+        }
+      })
+      .then((res) => {
+        console.log(res);
+      });
+  };
+  useEffect(() => {
+    getEventTypes();
+  }, []);
   return (
     <Page title="Event Type | POSH Events">
       <Container>

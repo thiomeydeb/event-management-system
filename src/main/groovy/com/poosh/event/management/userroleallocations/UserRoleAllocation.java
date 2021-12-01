@@ -53,6 +53,13 @@ public class UserRoleAllocation{
     )
     private Integer allocated_by;
 
+    @Column(
+            name = "is_active",
+            nullable = false,
+            columnDefinition = "BOOLEAN DEFAULT TRUE"
+    )
+    private Boolean isActive;
+
     public UserRoleAllocation(){
 
     }
@@ -106,5 +113,13 @@ public class UserRoleAllocation{
 
     public void setAllocated_by(Integer allocated_by) {
         this.allocated_by = allocated_by;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

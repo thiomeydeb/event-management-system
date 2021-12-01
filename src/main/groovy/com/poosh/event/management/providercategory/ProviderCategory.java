@@ -1,6 +1,9 @@
 package com.poosh.event.management.providercategory;
 
+import com.poosh.event.management.provider.Provider;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "ProviderCategory")
 @Table(name = "provider_category")
@@ -23,7 +26,7 @@ public class ProviderCategory {
             nullable = false,
             updatable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "title",
@@ -31,6 +34,20 @@ public class ProviderCategory {
             columnDefinition = "VARCHAR(50)"
     )
     private String name;
+
+    @Column(
+            name = "is_active",
+            nullable = false,
+            columnDefinition = "BOOLEAN DEFAULT TRUE"
+    )
+    private Boolean isActive;
+
+    @OneToMany(
+            mappedBy = "providerCategory",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+    )
+    private List<Provider> providerList;
 
     public ProviderCategory(){
 
@@ -40,11 +57,11 @@ public class ProviderCategory {
         this.name = name;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -55,4 +72,13 @@ public class ProviderCategory {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
 }

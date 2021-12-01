@@ -24,6 +24,10 @@ export default function EventType() {
       })
       .then((res) => {
         console.log(res);
+        setEventTypes(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error.toJSON);
       });
   };
   useEffect(() => {
@@ -49,7 +53,11 @@ export default function EventType() {
         <Card>
           <Scrollbar>
             {/* Display component based on view mode state */}
-            {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />}
+            {viewMode ? (
+              <ListEventType eventTypes={eventTypes} />
+            ) : (
+              <AddEventType setViewMode={setViewMode} />
+            )}
           </Scrollbar>
         </Card>
       </Container>

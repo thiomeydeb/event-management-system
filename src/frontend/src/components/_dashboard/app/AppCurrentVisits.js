@@ -43,10 +43,10 @@ export default function AppCurrentVisits() {
       theme.palette.warning.main,
       theme.palette.error.main
     ],
-    labels: ['America', 'Asia', 'Europe', 'Africa'],
+    s: ['America', 'Asia', 'Europe', 'Africa'],
     stroke: { colors: [theme.palette.background.paper] },
     legend: { floating: true, horizontalAlign: 'center' },
-    dataLabels: { enabled: true, dropShadow: { enabled: false } },
+    datas: { enabled: true, dropShadow: { enabled: false } },
     tooltip: {
       fillSeriesColor: false,
       y: {
@@ -57,7 +57,7 @@ export default function AppCurrentVisits() {
       }
     },
     plotOptions: {
-      pie: { donut: { labels: { show: false } } }
+      pie: { donut: { s: { show: false } } }
     }
   });
 

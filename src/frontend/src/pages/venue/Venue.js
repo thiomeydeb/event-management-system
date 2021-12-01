@@ -6,18 +6,18 @@ import plusFill from '@iconify/icons-eva/plus-fill';
 import editFill from '@iconify/icons-eva/edit-fill';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import AddEventType from './AddEventType';
-import ListEventType from './ListEventType';
-import EditEventType from './EditEventType';
+import ListVenues from './ListVenues';
+import AddVenue from './AddVenue';
+import EditVenue from './EditVenue';
 
-export default function EventType() {
+export default function Venue() {
   const [viewMode, setViewMode] = useState('list');
   return (
-    <Page title="Event Type | POSH Events">
+    <Page title="Venue | POSH Events">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Event Types' : 'Add Event Type'}
+            {viewMode ? 'Venue' : 'Add Venue'}
           </Typography>
           <Button
             variant="contained"
@@ -28,7 +28,7 @@ export default function EventType() {
             startIcon={<Icon icon={editFill} />}
             onClick={() => setViewMode('edit')}
           >
-            Edit Event Type
+            Edit Venue
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Button
@@ -38,16 +38,16 @@ export default function EventType() {
             startIcon={<Icon icon={plusFill} />}
             onClick={() => setViewMode('add')}
           >
-            New Event Type
+            New Venue
           </Button>
         </Stack>
         <Card>
           <Scrollbar>
             {/* Display component based on view mode state */}
             {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
-            {viewMode === 'list' && <ListEventType />}
-            {viewMode === 'add' && <AddEventType />}
-            {viewMode === 'edit' && <EditEventType setViewMode={setViewMode} />}
+            {viewMode === 'list' && <ListVenues />}
+            {viewMode === 'add' && <AddVenue />}
+            {viewMode === 'edit' && <EditVenue setViewMode={setViewMode} />}
           </Scrollbar>
         </Card>
       </Container>

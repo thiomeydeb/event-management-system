@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
-export default function AddEventTypeForm({ setViewMode }) {
+export default function EditProviderCategoryForm({ setViewMode }) {
   const navigate = useNavigate();
 
-  const addEventTypeSchema = Yup.object().shape({
+  const editProviderCategorySchema = Yup.object().shape({
     eventTypeName: Yup.string()
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
-      .required('Event type name required')
+      .required('Add Provider Category name required')
   });
 
   const formik = useFormik({
@@ -22,7 +22,7 @@ export default function AddEventTypeForm({ setViewMode }) {
       email: '',
       password: ''
     },
-    validationSchema: addEventTypeSchema,
+    validationSchema: editProviderCategorySchema,
     onSubmit: () => {
       navigate('/dashboard', { replace: true });
     }
@@ -32,15 +32,15 @@ export default function AddEventTypeForm({ setViewMode }) {
 
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('add')}>
+      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('list')}>
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Event type name"
+            label="Provider Category"
             margin="dense"
-            {...getFieldProps('eventTypeName')}
-            error={Boolean(touched.eventTypeName && errors.eventTypeName)}
-            helperText={touched.eventTypeName && errors.eventTypeName}
+            {...getFieldProps('providerCategoryName')}
+            error={Boolean(touched.providerCategoryName && errors.providerCategoryName)}
+            helperText={touched.providerCategoryName && errors.providerCategoryName}
           />
           <LoadingButton
             fullWidth

@@ -6,11 +6,14 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
-import Products from './pages/Products';
-import Blog from './pages/Blog';
 import User from './pages/User';
 import NotFound from './pages/Page404';
 import EventType from './pages/eventtype/EventType';
+import Provider from './pages/provider/Provider';
+import ProviderCategory from './pages/providercategory/ProviderCategory';
+import Venue from './pages/venue/Venue';
+import PlanEvent from './pages/planevent/PlanEvent';
+import { EventSetup } from './pages/EventSetup';
 
 // ----------------------------------------------------------------------
 
@@ -23,9 +26,12 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
-        { path: 'eventtype', element: <EventType /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> }
+        { path: 'planevent', element: <PlanEvent /> },
+        { path: 'eventsetup', element: <EventSetup /> },
+        { path: 'eventsetup/eventtype', element: <EventType /> },
+        { path: 'eventsetup/providercategory', element: <ProviderCategory /> },
+        { path: 'eventsetup/venue', element: <Venue /> },
+        { path: 'eventsetup/provider', element: <Provider /> }
       ]
     },
     {

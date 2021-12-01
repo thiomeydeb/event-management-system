@@ -51,8 +51,8 @@ export default function Register() {
 
       <MHidden width="mdDown">
         <SectionStyle>
-          <Typography variant="h3" sx={{ px: 12, mt: 14, mb: 4 }}>
-            Manage Events more effectively with Posh Events Today
+          <Typography variant="h3" sx={{ px: 10, mt: 14, mb: 4 }}>
+            Manage your Events more effectively with Posh Events Today
           </Typography>
           <img alt="register" src="/static/illustrations/illustration_register.png" />
         </SectionStyle>

@@ -15,13 +15,14 @@ function createData(name, status) {
 }
 
 const rows = [
-  createData('Wedding', 'in-active'),
-  createData('Music Concert', 'active'),
-  createData('Fashion', 'in-active'),
-  createData('Cake Festival', 'active')
+  createData('Security', 'in-active'),
+  createData('Catering', 'active'),
+  createData('Entertainment', 'in-active'),
+  createData('Design', 'active'),
+  createData('MC', 'active')
 ];
 
-export default function ListEventTypeTable() {
+export default function ListProviderCategoryTable() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

@@ -10,30 +10,33 @@ import { sentenceCase } from 'change-case';
 import { UserMoreMenu } from '../../components/_dashboard/user';
 import Label from '../../components/Label';
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, status) {
+  return { name, status };
 }
 
-export default function ListEventTypeTable({ eventTypes }) {
+const rows = [
+  createData('Security', 'in-active'),
+  createData('Catering', 'active'),
+  createData('Entertainment', 'in-active'),
+  createData('Design', 'active'),
+  createData('MC', 'active')
+];
+
+export default function ListProviderCategoryTable() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell align="left">Status</TableCell>
+            <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {eventTypes.map((row) => (
-            <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          {rows.map((row) => (
+            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
                 {row.name}
-              </TableCell>
-              <TableCell align="left">
-                <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
-                  {sentenceCase(row.active ? 'active' : 'inactive')}
-                </Label>
               </TableCell>
               <TableCell>
                 <Label variant="ghost" color={(row.status === 'in-active' && 'error') || 'success'}>

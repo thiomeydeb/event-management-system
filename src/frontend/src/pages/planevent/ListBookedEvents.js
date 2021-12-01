@@ -10,33 +10,43 @@ import { sentenceCase } from 'change-case';
 import { UserMoreMenu } from '../../components/_dashboard/user';
 import Label from '../../components/Label';
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, venue, total, status) {
+  return { name, venue, total, status };
 }
 
-export default function ListEventTypeTable({ eventTypes }) {
+const rows = [
+  createData('AFS fashion Event', 'The Hub Karen', 572000, 'Planning complete'),
+  createData('D&C Exhibition', 'Carnivore', 478500, 'Planning incomplete'),
+  createData('Danson Weds Philomena', 'Mamba-Village', 660000, 'Planning complete'),
+  createData('AFS fashion Event', 'The Hub Karen', 572000, 'Event Planner Assigned'),
+  createData('Adenkule Concert', 'Ngong Race cource', 802000, 'Planning incomplete')
+];
+
+export default function ListBookedEventsTable() {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell align="left">Status</TableCell>
+            <TableCell>Venue</TableCell>
+            <TableCell>Total Amount</TableCell>
+            <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {eventTypes.map((row) => (
-            <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          {rows.map((row) => (
+            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="left">
-                <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
-                  {sentenceCase(row.active ? 'active' : 'inactive')}
-                </Label>
-              </TableCell>
+              <TableCell>{row.venue}</TableCell>
+              <TableCell>{row.total}</TableCell>
               <TableCell>
-                <Label variant="ghost" color={(row.status === 'in-active' && 'error') || 'success'}>
+                <Label
+                  variant="ghost"
+                  color={(row.status === 'Planning incomplete' && 'error') || 'success'}
+                >
                   {sentenceCase(row.status)}
                 </Label>
               </TableCell>

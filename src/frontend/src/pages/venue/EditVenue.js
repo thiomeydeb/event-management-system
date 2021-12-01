@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
-export default function AddEventTypeForm({ setViewMode }) {
+export default function EditVenueForm({ setViewMode }) {
   const navigate = useNavigate();
 
-  const addEventTypeSchema = Yup.object().shape({
+  const editVenueSchema = Yup.object().shape({
     eventTypeName: Yup.string()
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
-      .required('Event type name required')
+      .required('Add Provider Category name required')
   });
 
   const formik = useFormik({
@@ -22,7 +22,7 @@ export default function AddEventTypeForm({ setViewMode }) {
       email: '',
       password: ''
     },
-    validationSchema: addEventTypeSchema,
+    validationSchema: editVenueSchema,
     onSubmit: () => {
       navigate('/dashboard', { replace: true });
     }
@@ -32,15 +32,23 @@ export default function AddEventTypeForm({ setViewMode }) {
 
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('add')}>
+      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('edit')}>
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Event type name"
+            label="Venue"
             margin="dense"
-            {...getFieldProps('eventTypeName')}
-            error={Boolean(touched.eventTypeName && errors.eventTypeName)}
-            helperText={touched.eventTypeName && errors.eventTypeName}
+            {...getFieldProps('venueName')}
+            error={Boolean(touched.venueName && errors.venueName)}
+            helperText={touched.venueName && errors.venueName}
+          />
+          <TextField
+            fullWidth
+            label="Location"
+            margin="dense"
+            {...getFieldProps('locationName')}
+            error={Boolean(touched.locationName && errors.locationName)}
+            helperText={touched.locationName && errors.locationName}
           />
           <LoadingButton
             fullWidth

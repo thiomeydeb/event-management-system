@@ -1,15 +1,7 @@
 import PropTypes from 'prop-types';
 import { Form, FormikProvider, useFormik } from 'formik';
 // material
-import {
-  Box,
-  Card,
-  Checkbox,
-  CardHeader,
-  Typography,
-  FormControlLabel,
-  Stack
-} from '@mui/material';
+import { Box, Card, Checkbox, CardHeader, Typography, FormControl, Stack } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +26,7 @@ function TaskItem({ task, checked, formik, ...other }) {
 
   return (
     <Stack direction="row" justifyContent="space-between" sx={{ py: 0.75 }}>
-      <FormControlLabel
+      <FormControl
         control={
           <Checkbox {...getFieldProps('checked')} value={task} checked={checked} {...other} />
         }

@@ -7,14 +7,20 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { sentenceCase } from 'change-case';
-import { UserMoreMenu } from '../../components/_dashboard/user';
 import Label from '../../components/Label';
+import EventTypeMoreMenu from './menu/EventTypeMoreMenu';
 
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
 
-export default function ListEventTypeTable({ eventTypes }) {
+export default function ListEventTypeTable({
+  eventTypes,
+  updateEventTypeStatus,
+  setViewMode,
+  url,
+  onEditClick
+}) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -36,7 +42,13 @@ export default function ListEventTypeTable({ eventTypes }) {
                 </Label>
               </TableCell>
               <TableCell align="right">
-                <UserMoreMenu />
+                <EventTypeMoreMenu
+                  row={row}
+                  updateEventTypeStatus={updateEventTypeStatus}
+                  setViewMode={setViewMode}
+                  url={url}
+                  onEditClick={onEditClick}
+                />
               </TableCell>
             </TableRow>
           ))}

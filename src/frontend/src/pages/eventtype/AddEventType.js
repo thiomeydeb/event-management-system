@@ -5,27 +5,23 @@ import axios from 'axios';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { addEventTypeSchema } from './validation/event-type';
+import { basicAuthBase64Header } from '../../constants/defaultValues';
 
-export default function AddEventTypeForm({ setViewMode, setAlertOptions, url }) {
+export default function AddEventTypeForm({ setViewMode, setAlertOptions, url, getEventTypes }) {
   const navigate = useNavigate();
-
   const formik = useFormik({
     initialValues: {
       name: ''
     },
     validationSchema: addEventTypeSchema,
     onSubmit: (values, formikActions) => {
-      axios
-        .post(
-          url,
-          { values },
-          {
-            auth: {
-              username: 'user1',
-              password: 'user1Passwaa'
-            }
-          }
-        )
+      axios(url, {
+        method: 'POST',
+        data: values,
+        headers: {
+          authorization: basicAuthBase64Header
+        }
+      })
         .then((res) => {
           formikActions.resetForm();
           formikActions.setSubmitting(false);
@@ -34,6 +30,7 @@ export default function AddEventTypeForm({ setViewMode, setAlertOptions, url }) 
             message: 'Event type added',
             severity: 'success'
           });
+          getEventTypes();
           setViewMode('list');
         })
         .catch((error) => {

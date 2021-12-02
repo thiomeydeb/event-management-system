@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,36 +5,42 @@ import axios from 'axios';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { addEventTypeSchema } from './validation/event-type';
+import { basicAuthBase64Header } from '../../constants/defaultValues';
 
-export default function EditEventTypeForm({ setViewMode, setAlertOptions, url }) {
+export default function EditEventTypeForm({
+  setViewMode,
+  setAlertOptions,
+  url,
+  getEventTypes,
+  updateData
+}) {
   const navigate = useNavigate();
-  const updateUrl = url.concat('/1');
+  const data = updateData === undefined ? {} : updateData;
+  const updateUrl = url.concat('/').concat(data.id);
 
   const formik = useFormik({
     initialValues: {
-      name: 'event'
+      name: data.name
     },
     validationSchema: addEventTypeSchema,
     onSubmit: (values, formikActions) => {
-      axios
-        .put(
-          updateUrl,
-          { values },
-          {
-            auth: {
-              username: 'user1',
-              password: 'user1Pass'
-            }
-          }
-        )
+      console.log(values);
+      axios(updateUrl, {
+        method: 'PUT',
+        data: values,
+        headers: {
+          authorization: basicAuthBase64Header
+        }
+      })
         .then((res) => {
           formikActions.resetForm();
           formikActions.setSubmitting(false);
           setAlertOptions({
             open: true,
-            message: 'Event type added',
+            message: 'update successful',
             severity: 'success'
           });
+          getEventTypes();
           setViewMode('list');
         })
         .catch((error) => {

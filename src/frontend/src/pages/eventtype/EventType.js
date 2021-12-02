@@ -10,8 +10,9 @@ import Scrollbar from '../../components/Scrollbar';
 import AddEventType from './AddEventType';
 import ListEventType from './ListEventType';
 import EditEventType from './EditEventType';
+import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
 
-const eventTypeUrl = 'http://localhost:8080/api/v1/event-type';
+const eventTypeUrl = apiBasePath.concat('event-type');
 
 export default function EventType() {
   const [viewMode, setViewMode] = useState('list');
@@ -20,6 +21,7 @@ export default function EventType() {
     severity: 'success',
     message: 'Success'
   });
+  const [editData, setEditData] = useState({});
   const [eventTypes, setEventTypes] = useState([{}]);
   const handleClose = () => {
     setAlertOptions({
@@ -28,22 +30,23 @@ export default function EventType() {
       message: 'Values fetched successfully'
     });
   };
-  const getEventTypes = () => {
+  const getEventTypes = (view) => {
     axios
       .get(eventTypeUrl, {
-        auth: {
-          username: 'user1',
-          password: 'user1Pass'
+        headers: {
+          authorization: basicAuthBase64Header
         }
       })
       .then((res) => {
         console.log(res);
         setEventTypes(res.data.data);
-        setAlertOptions({
-          open: true,
-          severity: 'success',
-          message: 'Values fetched successfully'
-        });
+        if (view === 'list') {
+          setAlertOptions({
+            open: true,
+            severity: 'success',
+            message: 'Values fetched successfully'
+          });
+        }
       })
       .catch((error) => {
         console.log(error.toJSON);
@@ -55,8 +58,37 @@ export default function EventType() {
       });
   };
   useEffect(() => {
-    getEventTypes();
+    getEventTypes('list');
   }, []);
+  const updateEventTypeStatus = (url, values) => {
+    axios(url, {
+      method: 'PUT',
+      headers: {
+        authorization: basicAuthBase64Header
+      },
+      data: values
+    })
+      .then((res) => {
+        getEventTypes();
+        setAlertOptions({
+          open: true,
+          message: 'status update successful',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        console.log(error.toJSON);
+        setAlertOptions({
+          open: true,
+          message: 'status update failed',
+          severity: 'error'
+        });
+      });
+  };
+  const onEditClick = (eventTypeData) => {
+    setEditData(eventTypeData);
+    setViewMode('edit');
+  };
   const Notification = () => (
     <Snackbar
       open={alertOptions.open}
@@ -101,12 +133,21 @@ export default function EventType() {
         <Card>
           <Scrollbar>
             {/* Display component based on view mode state */}
-            {viewMode === 'list' && <ListEventType eventTypes={eventTypes} />}
+            {viewMode === 'list' && (
+              <ListEventType
+                eventTypes={eventTypes}
+                updateEventTypeStatus={updateEventTypeStatus}
+                setViewMode={setViewMode}
+                url={eventTypeUrl}
+                onEditClick={onEditClick}
+              />
+            )}
             {viewMode === 'add' && (
               <AddEventType
                 setViewMode={setViewMode}
                 setAlertOptions={setAlertOptions}
                 url={eventTypeUrl}
+                getEventTypes={getEventTypes}
               />
             )}
             {viewMode === 'edit' && (
@@ -114,6 +155,8 @@ export default function EventType() {
                 setViewMode={setViewMode}
                 setAlertOptions={setAlertOptions}
                 url={eventTypeUrl}
+                getEventTypes={getEventTypes}
+                updateData={editData}
               />
             )}
           </Scrollbar>

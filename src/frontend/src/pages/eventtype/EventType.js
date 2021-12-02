@@ -11,6 +11,7 @@ import AddEventType from './AddEventType';
 import ListEventType from './ListEventType';
 import EditEventType from './EditEventType';
 import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
+import Notification from '../../components/custom/Notification';
 
 const eventTypeUrl = apiBasePath.concat('event-type');
 
@@ -38,7 +39,6 @@ export default function EventType() {
         }
       })
       .then((res) => {
-        console.log(res);
         setEventTypes(res.data.data);
         if (view === 'list') {
           setAlertOptions({
@@ -89,18 +89,6 @@ export default function EventType() {
     setEditData(eventTypeData);
     setViewMode('edit');
   };
-  const Notification = () => (
-    <Snackbar
-      open={alertOptions.open}
-      autoHideDuration={6000}
-      onClose={handleClose}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-    >
-      <Alert onClose={handleClose} severity={alertOptions.severity} sx={{ width: '100%' }}>
-        {alertOptions.message}
-      </Alert>
-    </Snackbar>
-  );
   return (
     <Page title="Event Type | POSH Events">
       <Container>
@@ -161,7 +149,12 @@ export default function EventType() {
             )}
           </Scrollbar>
         </Card>
-        <Notification />
+        <Notification
+          open={alertOptions.open}
+          handleCLose={handleClose}
+          severity={alertOptions.severity}
+          message={alertOptions.message}
+        />
       </Container>
     </Page>
   );

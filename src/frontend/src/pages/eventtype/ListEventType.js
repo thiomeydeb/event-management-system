@@ -10,10 +10,6 @@ import { sentenceCase } from 'change-case';
 import Label from '../../components/Label';
 import EventTypeMoreMenu from './menu/EventTypeMoreMenu';
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
 export default function ListEventTypeTable({
   eventTypes,
   updateEventTypeStatus,

@@ -14,7 +14,6 @@ export default function EditEventTypeForm({
   getEventTypes,
   updateData
 }) {
-  const navigate = useNavigate();
   const data = updateData === undefined ? {} : updateData;
   const updateUrl = url.concat('/').concat(data.id);
 

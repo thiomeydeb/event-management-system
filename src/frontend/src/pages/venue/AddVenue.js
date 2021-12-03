@@ -1,30 +1,49 @@
-import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useNavigate } from 'react-router-dom';
 // material
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import axios from 'axios';
+import { venueSchema } from './validation/venue';
+import { basicAuthBase64Header } from '../../constants/defaultValues';
 
-export default function AddVenueForm({ setViewMode }) {
+export default function AddVenueForm({ setViewMode, setAlertOptions, url, getVenues }) {
   const navigate = useNavigate();
-
-  const addVenueSchema = Yup.object().shape({
-    eventTypeName: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Venue name required')
-  });
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: ''
+      name: '',
+      location: '',
+      amount: 0
     },
-    validationSchema: addVenueSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    validationSchema: venueSchema,
+    onSubmit: (values, formikActions) => {
+      axios(url, {
+        method: 'POST',
+        data: values,
+        headers: {
+          authorization: basicAuthBase64Header
+        }
+      })
+        .then((res) => {
+          formikActions.resetForm();
+          formikActions.setSubmitting(false);
+          setAlertOptions({
+            open: true,
+            message: 'Venue added',
+            severity: 'success'
+          });
+          getVenues();
+          setViewMode('list');
+        })
+        .catch((error) => {
+          setAlertOptions({
+            open: true,
+            message: 'failed to add venue',
+            severity: 'error'
+          });
+          console.log(error);
+        });
     }
   });
 
@@ -32,23 +51,31 @@ export default function AddVenueForm({ setViewMode }) {
 
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('add')}>
+      <Form autoComplete="off" noValidate>
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Venue name"
+            label="Venue"
             margin="dense"
-            {...getFieldProps('venueName')}
+            {...getFieldProps('name')}
             error={Boolean(touched.venueName && errors.venueName)}
             helperText={touched.venueName && errors.venueName}
           />
           <TextField
             fullWidth
-            label="Location name"
+            label="Location"
             margin="dense"
-            {...getFieldProps('LocationName')}
-            error={Boolean(touched.LocationName && errors.LocationName)}
-            helperText={touched.LocationName && errors.LocationName}
+            {...getFieldProps('location')}
+            error={Boolean(touched.location && errors.location)}
+            helperText={touched.location && errors.location}
+          />
+          <TextField
+            fullWidth
+            label="Price"
+            margin="dense"
+            {...getFieldProps('amount')}
+            error={Boolean(touched.amount && errors.amount)}
+            helperText={touched.amount && errors.amount}
           />
           <LoadingButton
             fullWidth

@@ -24,13 +24,7 @@ export default function EventType() {
   });
   const [editData, setEditData] = useState({});
   const [eventTypes, setEventTypes] = useState([{}]);
-  const handleClose = () => {
-    setAlertOptions({
-      open: false,
-      severity: 'success',
-      message: 'Values fetched successfully'
-    });
-  };
+  const handleClose = () => {};
   const getEventTypes = (view) => {
     axios
       .get(eventTypeUrl, {

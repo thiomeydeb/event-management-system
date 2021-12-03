@@ -80,8 +80,8 @@ export default function Venue() {
         });
       });
   };
-  const onEditClick = (eventTypeData) => {
-    setEditData(eventTypeData);
+  const onEditClick = (venueData) => {
+    setEditData(venueData);
     setViewMode('edit');
   };
   return (

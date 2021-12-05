@@ -15,7 +15,7 @@ import Notification from '../../components/custom/Notification';
 
 const providerUrl = apiBasePath.concat('provider');
 
-export default function Provider() {
+export default function Event() {
   const [viewMode, setViewMode] = useState('list');
   const [alertOptions, setAlertOptions] = useState({
     open: false,
@@ -84,11 +84,11 @@ export default function Provider() {
     setViewMode('edit');
   };
   return (
-    <Page title="Provider | POSH Events">
+    <Page title="Event | POSH Events">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Provider' : 'Add Provider'}
+            {viewMode ? 'Provider' : 'Add Event'}
           </Typography>
           <Button
             variant="contained"
@@ -99,7 +99,7 @@ export default function Provider() {
             startIcon={<Icon icon={editFill} />}
             onClick={() => setViewMode('edit')}
           >
-            Edit Provider
+            Edit Event
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Button
@@ -109,7 +109,7 @@ export default function Provider() {
             startIcon={<Icon icon={plusFill} />}
             onClick={() => setViewMode('add')}
           >
-            New Provider
+            New Event
           </Button>
         </Stack>
         <Card>

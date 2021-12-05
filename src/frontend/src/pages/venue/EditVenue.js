@@ -67,8 +67,8 @@ export default function EditVenueForm({
             label="Venue"
             margin="dense"
             {...getFieldProps('name')}
-            error={Boolean(touched.venueName && errors.venueName)}
-            helperText={touched.venueName && errors.venueName}
+            error={Boolean(touched.name && errors.name)}
+            helperText={touched.name && errors.name}
           />
           <TextField
             fullWidth

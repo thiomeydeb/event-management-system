@@ -14,6 +14,7 @@ import ProviderCategory from './pages/providercategory/ProviderCategory';
 import Venue from './pages/venue/Venue';
 import PlanEvent from './pages/planevent/PlanEvent';
 import { EventSetup } from './pages/EventSetup';
+import Event from './pages/event/Event';
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +32,8 @@ export default function Router() {
         { path: 'eventsetup/eventtype', element: <EventType /> },
         { path: 'eventsetup/providercategory', element: <ProviderCategory /> },
         { path: 'eventsetup/venue', element: <Venue /> },
-        { path: 'eventsetup/provider', element: <Provider /> }
+        { path: 'eventsetup/provider', element: <Provider /> },
+        { path: 'event', element: <Event /> }
       ]
     },
     {

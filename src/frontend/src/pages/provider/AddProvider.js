@@ -98,7 +98,7 @@ export default function AddProviderForm({ setViewMode, setAlertOptions, url, get
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Provider title"
+            label="Event title"
             margin="dense"
             {...getFieldProps('title')}
             error={Boolean(touched.title && errors.title)}

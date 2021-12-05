@@ -5,12 +5,12 @@ import { Stack, TextField, Select } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
-import { providerSchema } from './validation/provider';
+import { eventSchema } from './validation/event';
 import { basicAuthBase64Header, apiBasePath } from '../../constants/defaultValues';
 
 const providerCategoryUrl = apiBasePath.concat('provider-category');
 
-export default function EditProviderForm({
+export default function EventProgress({
   setViewMode,
   setAlertOptions,
   url,
@@ -65,7 +65,7 @@ export default function EditProviderForm({
       cost: updateData.cost,
       categoryId
     },
-    validationSchema: providerSchema,
+    validationSchema: eventSchema,
     onSubmit: (values, formikActions) => {
       console.log(values);
       formikActions.setSubmitting(false);

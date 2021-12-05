@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("api/v1/user")
 @Validated
 public class UserController {
 
@@ -39,7 +39,7 @@ public class UserController {
         return userService.getUsersBasedOnRole(request.getParameterMap(), roleId);
     }
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "")
     public BaseApiResponse addUser(@RequestBody @Valid UserCreateDto user){
         return userService.addUser(user,1);
     }

@@ -23,6 +23,7 @@ export default function ListProviderCategoryTable({
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
+            <TableCell>Code</TableCell>
             <TableCell align="left">Status</TableCell>
           </TableRow>
         </TableHead>
@@ -32,6 +33,7 @@ export default function ListProviderCategoryTable({
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
+              <TableCell>{row.code}</TableCell>
               <TableCell align="left">
                 <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
                   {sentenceCase(row.active ? 'active' : 'inactive')}

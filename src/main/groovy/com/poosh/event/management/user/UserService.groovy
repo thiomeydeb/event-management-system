@@ -123,7 +123,7 @@ class UserService {
      boolean assignClientRole(long userId,long roleId,long assignedBy){
         Sql sql = new Sql(dataSource);
         def sqlParams = [userId: userId, roleId: roleId, loggedInUser: assignedBy];
-        sql.execute("INSERT INTO user_role_allocations(user_id, role_id, allocated_by) VALUES (?.userId, ?.roleId, ?.loggedInUser)", sqlParams);
+        sql.execute("INSERT INTO user_role_allocation(user_id, role_id, allocated_by) VALUES (?.userId, ?.roleId, ?.loggedInUser)", sqlParams);
         sql.close();
         return true;
     }
@@ -308,12 +308,12 @@ class UserService {
         Sql sql = new Sql(dataSource);
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "User Promoted to admin")
         def sqlParams = [userId: userId, loggedInUser: loggedInUser];
-        def userExistingRecords = sql.firstRow("SELECT * FROM admin_users WHERE user_id = ?.userId", sqlParams);
+        def userExistingRecords = sql.firstRow("SELECT * FROM admin_user WHERE user_id = ?.userId", sqlParams);
         def queryStatus;
         if(userExistingRecords!=null){
-            queryStatus =  sql.executeUpdate("UPDATE admin_users SET is_active = TRUE WHERE user_id = ?.userId", sqlParams);
+            queryStatus =  sql.executeUpdate("UPDATE admin_user SET is_active = TRUE WHERE user_id = ?.userId", sqlParams);
         }else{
-            queryStatus = sql.executeInsert("INSERT INTO admin_users(user_id, added_by, is_active) VALUES (?.userId, ?.loggedInUser,TRUE)", sqlParams);
+            queryStatus = sql.executeInsert("INSERT INTO admin_user(user_id, added_by, is_active) VALUES (?.userId, ?.loggedInUser,TRUE)", sqlParams);
         }
         sql.close();
         if(queryStatus){

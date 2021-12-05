@@ -1,45 +1,33 @@
-import { useState, useEffect } from 'react';
 import { useFormik, Form, FormikProvider } from 'formik';
 // material
-import { Stack, TextField, Select } from '@mui/material';
+import { Select, Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
-import { providerSchema } from './validation/provider';
-import { basicAuthBase64Header, apiBasePath } from '../../constants/defaultValues';
+import { useEffect, useState } from 'react';
+import MenuItem from '@mui/material/MenuItem';
+import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
+import { eventSchema } from './validation/event';
 
-const providerCategoryUrl = apiBasePath.concat('provider-category');
+const eventTypeUrl = apiBasePath.concat('event-type');
 
-export default function EditProviderForm({
-  setViewMode,
-  setAlertOptions,
-  url,
-  getProviders,
-  updateData
-}) {
-  const data = updateData === undefined ? {} : updateData;
-  const categoryId = data.providerCategory ? data.providerCategory.id : 0;
-  const categoryName = data.providerCategory ? data.providerCategory.name : '';
-  const [category, setCategory] = useState({ id: categoryId, name: categoryName });
-  const [providerCategories, setProviderCategories] = useState([
-    { id: categoryId, name: categoryName }
-  ]);
-  const updateUrl = url.concat('/').concat(data.id);
+export default function AddEvent({ setViewMode, setAlertOptions, url, getProviders }) {
+  const [category, setCategory] = useState({ id: 0, name: '' });
+  const [eventTypes, setEventTypes] = useState([]);
 
-  const getProviderCategories = () => {
-    axios(providerCategoryUrl, {
+  const getEventTypes = () => {
+    axios(eventTypeUrl, {
       method: 'GET',
       headers: {
         authorization: basicAuthBase64Header
       }
     })
       .then((res) => {
-        setProviderCategories(res.data.data);
+        setEventTypes(res.data.data);
       })
       .catch((error) => {
         setAlertOptions({
           open: true,
-          message: 'failed to fetch provider category data',
+          message: 'failed to fetch event types',
           severity: 'error'
         });
         console.log(error);
@@ -47,12 +35,12 @@ export default function EditProviderForm({
   };
 
   useEffect(() => {
-    getProviderCategories();
+    getEventTypes();
   }, []);
 
-  const getCategoryIndex = (id) => {
-    for (let i = 0; i < providerCategories.length; i += 1) {
-      if (providerCategories[i].id === id) {
+  const getEventIndex = (id) => {
+    for (let i = 0; i < eventTypes.length; i += 1) {
+      if (eventTypes[i].id === id) {
         return i;
       }
     }
@@ -61,16 +49,14 @@ export default function EditProviderForm({
 
   const formik = useFormik({
     initialValues: {
-      title: updateData.title,
-      cost: updateData.cost,
-      categoryId
+      title: '',
+      categoryId: 0,
+      cost: 0
     },
-    validationSchema: providerSchema,
+    validationSchema: eventSchema,
     onSubmit: (values, formikActions) => {
-      console.log(values);
-      formikActions.setSubmitting(false);
-      axios(updateUrl, {
-        method: 'PUT',
+      axios(url, {
+        method: 'POST',
         data: values,
         headers: {
           authorization: basicAuthBase64Header
@@ -81,7 +67,7 @@ export default function EditProviderForm({
           formikActions.setSubmitting(false);
           setAlertOptions({
             open: true,
-            message: 'update successful',
+            message: 'Event added',
             severity: 'success'
           });
           getProviders();
@@ -90,10 +76,9 @@ export default function EditProviderForm({
         .catch((error) => {
           setAlertOptions({
             open: true,
-            message: 'failed to update provider',
+            message: 'failed to add event',
             severity: 'error'
           });
-          formikActions.setSubmitting(false);
           console.log(error);
         });
     }
@@ -122,11 +107,11 @@ export default function EditProviderForm({
           <Select
             id="outlined-select-category"
             label="Category"
-            value={providerCategories[getCategoryIndex(category.id)]}
+            value={eventTypes[getEventIndex(category.id)]}
             onChange={handleChange}
             error={Boolean(touched.categoryId && errors.categoryId)}
           >
-            {providerCategories.map((option, index) => (
+            {eventTypes.map((option, index) => (
               <MenuItem key={option.id} value={option}>
                 {option.name}
               </MenuItem>

@@ -19,7 +19,8 @@ export default function EditProviderCategoryForm({
 
   const formik = useFormik({
     initialValues: {
-      name: data.name
+      name: data.name,
+      code: data.code
     },
     validationSchema: addProviderCategorySchema,
     onSubmit: (values, formikActions) => {
@@ -62,11 +63,19 @@ export default function EditProviderCategoryForm({
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Provider Category"
+            label="Event Category Name"
             margin="dense"
             {...getFieldProps('name')}
             error={Boolean(touched.name && errors.name)}
             helperText={touched.name && errors.name}
+          />
+          <TextField
+            fullWidth
+            label="Event Category Code"
+            margin="dense"
+            {...getFieldProps('code')}
+            error={Boolean(touched.code && errors.code)}
+            helperText={touched.code && errors.code}
           />
           <LoadingButton
             fullWidth

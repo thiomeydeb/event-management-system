@@ -7,15 +7,15 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import axios from 'axios';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import AddProviderCategory from './AddProviderCategory';
-import ListProviderCategory from './ListProviderCategory';
-import EditProviderCategory from './EditProviderCategory';
-import { basicAuthBase64Header, apiBasePath } from '../../constants/defaultValues';
+import AddEvent from './AddEvent';
+import EventList from './EventList';
+import EventProgress from './EventProgress';
+import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
 import Notification from '../../components/custom/Notification';
 
-const providerCategoryUrl = apiBasePath.concat('provider-category');
+const eventsUrl = apiBasePath.concat('event');
 
-export default function ProviderCategory() {
+export default function Event() {
   const [viewMode, setViewMode] = useState('list');
   const [alertOptions, setAlertOptions] = useState({
     open: false,
@@ -23,23 +23,17 @@ export default function ProviderCategory() {
     message: 'Success'
   });
   const [editData, setEditData] = useState({});
-  const [providerCategories, setProviderCategories] = useState([{}]);
-  const handleClose = () => {
-    setAlertOptions({
-      open: false,
-      severity: 'success',
-      message: 'Values fetched successfully'
-    });
-  };
-  const getProviderCategories = (view) => {
+  const [events, setEvents] = useState([{}]);
+  const handleClose = () => {};
+  const getEvents = (view) => {
     axios
-      .get(providerCategoryUrl, {
+      .get(eventsUrl, {
         headers: {
           authorization: basicAuthBase64Header
         }
       })
       .then((res) => {
-        setProviderCategories(res.data.data);
+        setEvents(res.data.data);
         if (view === 'list') {
           setAlertOptions({
             open: true,
@@ -58,9 +52,9 @@ export default function ProviderCategory() {
       });
   };
   useEffect(() => {
-    getProviderCategories('list');
+    getEvents('list');
   }, []);
-  const updateProviderCategoryStatus = (url, values) => {
+  const updateEventStatus = (url, values) => {
     axios(url, {
       method: 'PUT',
       headers: {
@@ -69,7 +63,7 @@ export default function ProviderCategory() {
       data: values
     })
       .then((res) => {
-        getProviderCategories();
+        getEvents();
         setAlertOptions({
           open: true,
           message: 'status update successful',
@@ -85,16 +79,16 @@ export default function ProviderCategory() {
         });
       });
   };
-  const onEditClick = (categoryData) => {
-    setEditData(categoryData);
+  const onEditClick = (eventData) => {
+    setEditData(eventData);
     setViewMode('edit');
   };
   return (
-    <Page title="Event Category | POSH Events">
+    <Page title="Event | POSH Events">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Event Category' : 'Add Event Category'}
+            {viewMode ? 'Event' : 'Add Event'}
           </Typography>
           <Button
             variant="contained"
@@ -105,7 +99,7 @@ export default function ProviderCategory() {
             startIcon={<Icon icon={editFill} />}
             onClick={() => setViewMode('edit')}
           >
-            Edit Event Category
+            Edit Event
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Button
@@ -115,7 +109,7 @@ export default function ProviderCategory() {
             startIcon={<Icon icon={plusFill} />}
             onClick={() => setViewMode('add')}
           >
-            New Event Category
+            New Event
           </Button>
         </Stack>
         <Card>
@@ -123,31 +117,17 @@ export default function ProviderCategory() {
             {/* Display component based on view mode state */}
             {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
             {viewMode === 'list' && (
-              <ListProviderCategory
-                providerCategories={providerCategories}
-                updateProviderCategoryStatus={updateProviderCategoryStatus}
-                setViewMode={setViewMode}
-                url={providerCategoryUrl}
-                onEditClick={onEditClick}
-              />
+              <EventList events={events} setViewMode={setViewMode} onEditClick={onEditClick} />
             )}
             {viewMode === 'add' && (
-              <AddProviderCategory
+              <AddEvent
                 setViewMode={setViewMode}
                 setAlertOptions={setAlertOptions}
-                url={providerCategoryUrl}
-                getProviderCategories={getProviderCategories}
+                url={eventsUrl}
+                getEvents={getEvents}
               />
             )}
-            {viewMode === 'edit' && (
-              <EditProviderCategory
-                setViewMode={setViewMode}
-                setAlertOptions={setAlertOptions}
-                url={providerCategoryUrl}
-                getProviderCategories={getProviderCategories}
-                updateData={editData}
-              />
-            )}
+            {viewMode === 'progress' && <EventProgress setViewMode={setViewMode} />}
           </Scrollbar>
         </Card>
         <Notification

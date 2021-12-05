@@ -2,6 +2,7 @@ package com.poosh.event.management.bookevent
 
 import com.poosh.event.management.apiresponse.BaseApiResponse
 import com.poosh.event.management.audit.AuditService
+import com.poosh.event.management.bookevent.dto.EventCreateDto
 import com.poosh.event.management.utils.CommonDbFunctions
 import com.poosh.event.management.utils.MyUtil
 import groovy.json.JsonSlurper
@@ -29,38 +30,33 @@ class BookEventService {
         this.auditService = auditService
     }
 
-    Long insertBookedEventDetails(String bookedEventDetails, long userId){
+    Long insertBookedEventDetails(EventCreateDto bookedEventDetails, long userId){
         Sql sql = new Sql(dataSource);
-        Map bookedEventMap = new JsonSlurper().parseText(bookedEventDetails);
-        bookedEventMap.put("clientId",userId);
-        Double totalAmount = Double.parseDouble(bookedEventMap.get("totalAmount"));
-        Double managementAmount = Double.parseDouble(bookedEventMap.get("managementAmount"));
-        bookedEventMap.totalAmount = totalAmount;
-        bookedEventMap.managementAmount = managementAmount;
-        def insertRes = sql.executeInsert("INSERT INTO booked_events (title, client_id, event_type_id, management_amount, other_information, " +
+        bookedEventDetails.setClientId(userId)
+        def insertRes = sql.executeInsert("INSERT INTO booked_event (title, client_id, event_type_id, management_amount, other_information, " +
                 "attendees, total_amount) VALUES (?.name, ?.clientId, ?.eventTypeId, ?.managementAmount, ?.otherInformation, ?.attendees, " +
-                "?.totalAmount)", bookedEventMap);
+                "?.totalAmount)", bookedEventDetails);
         //get event id
         def bookedEventId = insertRes?.get(0)?.get(0);
 
         //create list of providers to be used to insert in planned_event_details table
         List <HashMap> providers = new ArrayList<HashMap>();
-        def venueId = bookedEventMap.get("venueId");
+        def venueId = bookedEventDetails.venueId
         Map venue = ["providerId": venueId, "type": "v"];
 
-        def entertainmentId = bookedEventMap.get("entertainmentId");
+        def entertainmentId = bookedEventDetails.entertainmentId
         Map entertainment = ["providerId": entertainmentId, "type": "p"];
 
-        def cateringId = bookedEventMap.get("cateringId");
+        def cateringId = bookedEventDetails.cateringId
         Map catering = ["providerId": cateringId, "type": "p"];
 
-        def securityId = bookedEventMap.get("securityId");
+        def securityId = bookedEventDetails.securityId
         Map security = ["providerId": securityId, "type": "p"];
 
-        def designId = bookedEventMap.get("designId");
+        def designId = bookedEventDetails.designId
         Map design = ["providerId": designId, "type": "p"];
 
-        def mcId = bookedEventMap.get("mcId");
+        def mcId = bookedEventDetails.mcId
         Map mc = ["providerId": mcId, "type": "p"];
 
         //add providers to list
@@ -577,10 +573,12 @@ class BookEventService {
         return CommonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
     }
 
-    BaseApiResponse bookEvent(String bookedEventDetails, HttpServletRequest request, Principal principal) {
-        BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "", [])
-        String currentUser  = principal.getName()
-        Long userId = CommonDbFunctions.getUserIdFromEmail(currentUser)
+    BaseApiResponse bookEvent(EventCreateDto bookedEventDetails, HttpServletRequest request, Principal principal) {
+        BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "")
+//        String currentUser  = principal.getName()
+//        Long userId = CommonDbFunctions.getUserIdFromEmail(currentUser)
+        String currentUser = "user.test@gmail.com"
+        Long userId = 1L
         Long insertRes = insertBookedEventDetails(bookedEventDetails, userId)
         if(insertRes!=null){
             auditService.logAuditEvent("Book Event",request.getRemoteAddr(),currentUser,insertRes+"")

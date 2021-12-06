@@ -21,14 +21,17 @@ class AdminRoleService {
     private final AdminRoleRepository adminRoleRepository
     private final DataSource dataSource
     private final AuditService auditService
+    private final CommonDbFunctions commonDbFunctions
 
     @Autowired //inject the object dependency implicitly
     AdminRoleService(AdminRoleRepository adminRoleRepository,
                      DataSource dataSource,
-                     AuditService auditService) {
+                     AuditService auditService,
+                     CommonDbFunctions commonDbFunctions) {
         this.adminRoleRepository = adminRoleRepository
         this.dataSource = dataSource
         this.auditService = auditService
+        this.commonDbFunctions = commonDbFunctions
     }
 
     BaseApiResponse getRoles(Map parameterMap) {
@@ -49,7 +52,7 @@ class AdminRoleService {
         }
         queryStr = "SELECT * FROM admin_roles WHERE id != 0 " + queryFilter + " LIMIT ?.limit OFFSET ?.start"
         countStr = "SELECT COUNT(1) FROM admin_roles WHERE id != 0 " + queryFilter;
-        return CommonDbFunctions.returnJsonFromQueryWithCount(queryStr, countStr, sqlParams, countParamStatus);
+        return commonDbFunctions.returnJsonFromQueryWithCount(queryStr, countStr, sqlParams, countParamStatus);
 
 
     }
@@ -90,7 +93,7 @@ class AdminRoleService {
                         WHERE
                         admin_permissions.id = admin_role_permissions.permission_id AND admin_role_permissions.role_id = ?.roleId
                 """
-        return CommonDbFunctions.returnJsonFromQueryWithCount(query, countQuery, sqlParams, true);
+        return commonDbFunctions.returnJsonFromQueryWithCount(query, countQuery, sqlParams, true);
 
     }
 
@@ -115,7 +118,7 @@ class AdminRoleService {
                                 WHERE
                                 NOT EXISTS (SELECT * FROM admin_role_permissions WHERE admin_permissions. ID = admin_role_permissions.permission_id AND admin_role_permissions.role_id = ?.roleId)""";
 
-        return CommonDbFunctions.returnJsonFromQueryWithCount(query, countQuery, sqlParams, true);
+        return commonDbFunctions.returnJsonFromQueryWithCount(query, countQuery, sqlParams, true);
 
     }
 
@@ -124,7 +127,7 @@ class AdminRoleService {
                                         HttpServletRequest request,
                                         Principal principal) {
         String currentUser = principal.getName()
-        long userId = CommonDbFunctions.getUserIdFromEmail(currentUser)
+        long userId = commonDbFunctions.getUserIdFromEmail(currentUser)
         def sqlParams = [userId: userId, roleId: roleId];
         Sql sql = new Sql(dataSource);
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "allocation successful")
@@ -160,7 +163,7 @@ class AdminRoleService {
         }
         sql.close()
         String currentUser = principal.getName()
-        long userId = CommonDbFunctions.getUserIdFromEmail(currentUser)
+        long userId = commonDbFunctions.getUserIdFromEmail(currentUser)
         auditService.logAuditEvent("Deallocate user role",request.getRemoteAddr(),currentUser,"User:"+userId+",Role:"+roleId);
         return res
     }

@@ -30,6 +30,7 @@ class UserService {
     private final PasswordManagementService passwordManagementService
     private final DataSource dataSource
     private final EmailSender emailSender
+    private final CommonDbFunctions commonDbFunctions
 
     @Autowired
     UserService(UserRepository userRepository,
@@ -37,13 +38,15 @@ class UserService {
                 PasswordEncoder passwordEncoder,
                 PasswordManagementService passwordManagementService,
                 DataSource dataSource,
-                EmailSender emailSender) {
+                EmailSender emailSender,
+                CommonDbFunctions commonDbFunctions) {
         this.userRepository = userRepository
         this.modelMapper = modelMapper
         this.passwordEncoder = passwordEncoder
         this.passwordManagementService = passwordManagementService
         this.dataSource = dataSource
         this.emailSender = emailSender
+        this.commonDbFunctions = commonDbFunctions
     }
 
     BaseApiResponse addUser(UserCreateDto body, int registrationType) {
@@ -102,7 +105,7 @@ class UserService {
 
      Long getUserIdFromToken(String token){
         Sql sql = new Sql(dataSource);
-        def userId = sql.firstRow("SELECT user_id FROM account_activation_tokens WHERE token = ?",token).get("user_id");
+        def userId = sql.firstRow("SELECT user_id FROM account_activation_token WHERE token = ?",token).get("user_id");
         return userId;
     }
 
@@ -110,7 +113,7 @@ class UserService {
         Sql sql = new Sql(dataSource);
         boolean status = false;
         sql.withTransaction {
-            sql.executeUpdate("UPDATE account_activation_tokens SET is_active = FALSE WHERE token = ?",token);
+            sql.executeUpdate("UPDATE account_activation_token SET is_active = FALSE WHERE token = ?",token);
             sql.executeUpdate("UPDATE users SET is_active = TRUE WHERE id = ?",userId);
             assignClientRole(userId,0,userId);
             status = true;
@@ -178,7 +181,7 @@ class UserService {
         Sql sql = new Sql(dataSource);
         def res = false;
         def params = [userId: userId, token: token];
-        def queryStatus = sql.executeInsert("INSERT INTO account_activation_tokens(token, user_id) VALUES (?.token, ?.userId)", params);
+        def queryStatus = sql.executeInsert("INSERT INTO account_activation_token(token, user_id) VALUES (?.token, ?.userId)", params);
         sql.close();
         if(queryStatus){
             res = true;
@@ -268,7 +271,7 @@ class UserService {
                 users """+queryFilter+" LIMIT ?.limit OFFSET ?.start";
 
         def countQuery = """SELECT COUNT(1) FROM users """+queryFilter;
-        return  CommonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, sqlParams, countParamStatus);
+        return  commonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, sqlParams, countParamStatus);
 
     }
 
@@ -301,7 +304,7 @@ class UserService {
         INNER JOIN user_role_allocations ON user_role_allocations.role_id = admin_roles.id
         WHERE user_role_allocations.user_id = ?.userId
         """;
-        return  CommonDbFunctions.returnJsonFirstRow(query, sqlParams);
+        return  commonDbFunctions.returnJsonFirstRow(query, sqlParams);
     }
 
      BaseApiResponse promoteToAdmin(long userId,long loggedInUser){
@@ -558,7 +561,7 @@ class UserService {
                             INNER JOIN user_role_allocations ON users.id = user_role_allocations.user_id 
                             """+queryFilter+"user_role_allocations.role_id = ?.roleId LIMIT ?.limit OFFSET ?.start";
 
-        return  CommonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, sqlParams, countParamStatus);
+        return  commonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, sqlParams, countParamStatus);
 
     }
 

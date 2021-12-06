@@ -10,110 +10,94 @@ public class PlannedEventDetails {
             name = "planned_event_details_sequence",
             sequenceName = "planned_event_details_sequence",
             allocationSize = 1
-
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "planned_event_details_sequence"
     )
-
     @Id
     @Column(
             name = "id",
-            nullable = false,
-            updatable = false
+            updatable = false,
+            columnDefinition = "BIGSERIAL"
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "event_id",
             nullable = false,
             columnDefinition = "BIGINT"
     )
-    private Integer event_id;
+    private Long eventId;
 
     @Column(
             name = "venue_id",
-            nullable = false,
-            columnDefinition = "INTEGER"
+            columnDefinition = "BIGINT"
     )
-    private Integer venue_id;
+    private Long venueId;
 
     @Column(
             name = "provider_id",
-            nullable = false,
-            columnDefinition = "INTEGER"
+            columnDefinition = "BIGINT"
     )
-    private Integer provider_id;
+    private Long providerId;
 
     @Column(
             name = "planner_id",
             nullable = false,
-            columnDefinition = "INTEGER"
+            columnDefinition = "BIGINT"
     )
-    private Integer planner_id;
+    private Long plannerId;
 
     @Column(
             name = "status",
             nullable = false,
-            columnDefinition = "BOOLEAN"
+            columnDefinition = "BOOLEAN DEFAULT TRUE"
     )
     private Boolean status;
 
     public PlannedEventDetails(){
 
     }
-    public PlannedEventDetails(
-            Integer event_id,
-            Integer venue_id,
-            Integer provider_id,
-            Integer planner_id,
-            Boolean status) {
-        this.event_id = event_id;
-        this.venue_id = venue_id;
-        this.provider_id = provider_id;
-        this.planner_id = planner_id;
+
+    public PlannedEventDetails(Long eventId, Long venueId, Long providerId, Long plannerId, Boolean status) {
+        this.eventId = eventId;
+        this.venueId = venueId;
+        this.providerId = providerId;
+        this.plannerId = plannerId;
         this.status = status;
     }
 
-    public Integer getId() {
-        return id;
+    public Long getEventId() {
+        return eventId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
-    public Integer getEvent_id() {
-        return event_id;
+    public Long getVenueId() {
+        return venueId;
     }
 
-    public void setEvent_id(Integer event_id) {
-        this.event_id = event_id;
+    public void setVenueId(Long venueId) {
+        this.venueId = venueId;
     }
 
-    public Integer getVenue_id() {
-        return venue_id;
+    public Long getProviderId() {
+        return providerId;
     }
 
-    public void setVenue_id(Integer venue_id) {
-        this.venue_id = venue_id;
+    public void setProviderId(Long providerId) {
+        this.providerId = providerId;
     }
 
-    public Integer getProvider_id() {
-        return provider_id;
+    public Long getPlannerId() {
+        return plannerId;
     }
 
-    public void setProvider_id(Integer provider_id) {
-        this.provider_id = provider_id;
-    }
-
-    public Integer getPlanner_id() {
-        return planner_id;
-    }
-
-    public void setPlanner_id(Integer planner_id) {
-        this.planner_id = planner_id;
+    public void setPlannerId(Long plannerId) {
+        this.plannerId = plannerId;
     }
 
     public Boolean getStatus() {

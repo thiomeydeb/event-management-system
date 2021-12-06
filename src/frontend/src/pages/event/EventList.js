@@ -17,6 +17,43 @@ import EventMoreMenu from './menu/EventMoreMenu';
 
 function Row(props) {
   const { row, setViewMode, onEditClick } = props;
+  let statusColor = 'error';
+  let statusMessage = 'undefined';
+  let greeningStatusColor = 'error';
+  let greeningStatusMessage = 'undefined';
+  if (row.status === 0) {
+    statusColor = 'warning';
+    statusMessage = 'Pending';
+  } else if (row.status === 1) {
+    statusColor = 'info';
+    statusMessage = 'Planner Assigned';
+  } else if (row.status === 2) {
+    statusColor = 'info';
+    statusMessage = 'In progress';
+  } else if (row.status === 3) {
+    statusColor = 'success';
+    statusMessage = 'Complete';
+  } else if (row.status === 4) {
+    statusColor = 'error';
+    statusMessage = 'Cancelled';
+  }
+
+  if (row.status === 0) {
+    greeningStatusColor = 'warning';
+    greeningStatusMessage = 'Pending';
+  } else if (row.status === 1) {
+    greeningStatusColor = 'info';
+    greeningStatusMessage = 'Planner Assigned';
+  } else if (row.status === 2) {
+    greeningStatusColor = 'info';
+    greeningStatusMessage = 'In progress';
+  } else if (row.status === 3) {
+    greeningStatusColor = 'success';
+    greeningStatusMessage = 'Complete';
+  } else if (row.status === 4) {
+    greeningStatusColor = 'error';
+    statusMessage = 'Cancelled';
+  }
   return (
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -34,14 +71,25 @@ function Row(props) {
           {row.title}
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.providerCategory ? row.providerCategory.name : ''}
+          {row.eventType}
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.cost}
+          {row.attendees}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {row.managementAmount}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {row.totalAmount}
         </TableCell>
         <TableCell align="left">
-          <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
-            {sentenceCase(row.active ? 'active' : 'inactive')}
+          <Label variant="ghost" color={statusColor}>
+            {sentenceCase(statusMessage)}
+          </Label>
+        </TableCell>
+        <TableCell align="left">
+          <Label variant="ghost" color={greeningStatusColor}>
+            {sentenceCase(greeningStatusMessage)}
           </Label>
         </TableCell>
         <TableCell align="right">
@@ -54,19 +102,10 @@ function Row(props) {
 
 Row.propTypes = {
   row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired
-      })
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired
+    totalAmont: PropTypes.number.isRequired,
+    managementAmount: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    category: PropTypes.number.isRequired
   }).isRequired
 };
 
@@ -77,9 +116,12 @@ export default function EventList({ events, setViewMode, onEditClick }) {
         <TableHead>
           <TableRow>
             <TableCell>Title</TableCell>
-            <TableCell>Category</TableCell>
-            <TableCell>Cost</TableCell>
+            <TableCell>Type</TableCell>
+            <TableCell>Attendees</TableCell>
+            <TableCell>Management Cost</TableCell>
+            <TableCell>Total Cost</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Greening Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

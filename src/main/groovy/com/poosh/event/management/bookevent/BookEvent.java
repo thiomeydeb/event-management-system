@@ -24,7 +24,8 @@ public class BookEvent {
     @Id
     @Column(
             name = "id",
-            updatable = false
+            updatable = false,
+            columnDefinition = "BIGSERIAL"
     )
     private Long id;
 
@@ -105,6 +106,12 @@ public class BookEvent {
             columnDefinition = "TIMESTAMP(6) WITH TIME ZONE"
     )
     private LocalDate completion_timestamp;
+
+    @Column(
+            name = "greening_status",
+            columnDefinition = "INTEGER DEFAULT 0"
+    )
+    private Integer greeningStatus;
 
     public BookEvent(){
     }
@@ -215,5 +222,13 @@ public class BookEvent {
 
     public void setUser(User user) {
         user = user;
+    }
+
+    public Integer getGreeningStatus() {
+        return greeningStatus;
+    }
+
+    public void setGreeningStatus(Integer greeningStatus) {
+        this.greeningStatus = greeningStatus;
     }
 }

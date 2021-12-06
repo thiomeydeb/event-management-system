@@ -23,14 +23,17 @@ class PlannedEventDetailsService {
     private final PlannedEventDetailsRepository plannedEventDetailsRepository
     private final DataSource dataSource
     private final AuditService auditService
+    private final CommonDbFunctions commonDbFunctions
 
     @Autowired //inject the object dependency implicitly
     PlannedEventDetailsService(PlannedEventDetailsRepository plannedEventDetailsRepository,
                                DataSource dataSource,
-                               AuditService auditService) {
+                               AuditService auditService,
+                               CommonDbFunctions commonDbFunctions) {
         this.plannedEventDetailsRepository = plannedEventDetailsRepository
         this.dataSource = dataSource
         this.auditService = auditService
+        this.commonDbFunctions = commonDbFunctions
     }
 
     BaseApiResponse getPlannedProviderDetails(long eventId){
@@ -119,7 +122,7 @@ class PlannedEventDetailsService {
 
     BaseApiResponse getBookedEventsAssignedToPlanner(Principal principal, Map parameterMap){
         String userName = principal.getName()
-        long userId = CommonDbFunctions.getUserIdFromEmail(userName)
+        long userId = commonDbFunctions.getUserIdFromEmail(userName)
         def params = MyUtil.flattenListParam(parameterMap)
         Map sqlParams = [start: 0, limit: 5, "plannerId": userId]
         def countParamStatus = true
@@ -333,7 +336,7 @@ class PlannedEventDetailsService {
                             event_planner_allocations.user_id = ?.plannerId AND event_planner_allocations.status = TRUE
                             LIMIT ?.limit OFFSET ?.start""";
 
-        return CommonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
+        return commonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
     }
 
     int savePlannedEventDetails(String plannedEventDetails, long userId, long eventId){
@@ -380,7 +383,7 @@ class PlannedEventDetailsService {
                                           Principal principal) {
         BaseApiResponse res = new BaseApiResponse([],HttpStatus.OK.value(),"Provider Details Saved successfully", [])
         String userName = principal.getName()
-        long userId = CommonDbFunctions.getUserIdFromEmail(userName);
+        long userId = commonDbFunctions.getUserIdFromEmail(userName);
         long plannedEventId = Long.parseLong(webRequest.getParameter("eventId"));
         long eventStatus = savePlannedEventDetails(body, userId, plannedEventId);
 

@@ -32,9 +32,14 @@ public class BookEventController {
         return bookEventService.getBookedEventsByClient(id, request.getParameterMap());
     }
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public BaseApiResponse getAllBookedEvents(WebRequest request){
         return bookEventService.getAllBookedEvents(request.getParameterMap());
+    }
+
+    @GetMapping(value = "/deprecated")
+    public BaseApiResponse getAllBookedEventsDeprecated(WebRequest request){
+        return bookEventService.getAllBookedEventsDeprecated(request.getParameterMap());
     }
 
 }

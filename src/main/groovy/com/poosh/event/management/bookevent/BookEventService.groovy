@@ -20,14 +20,17 @@ class BookEventService {
     private final BookEventRepository bookedEventRepository
     private final DataSource dataSource
     private final AuditService auditService
+    private final CommonDbFunctions commonDbFunctions
 
     @Autowired //inject the object dependency implicitly
     BookEventService(BookEventRepository bookedEventRepository,
-                            DataSource dataSource,
-                            AuditService auditService) {
+                     DataSource dataSource,
+                     AuditService auditService,
+                     CommonDbFunctions commonDbFunctions) {
         this.bookedEventRepository = bookedEventRepository
         this.dataSource = dataSource
         this.auditService = auditService
+        this.commonDbFunctions = commonDbFunctions
     }
 
     Long insertBookedEventDetails(EventCreateDto bookedEventDetails, long userId){
@@ -94,7 +97,7 @@ class BookEventService {
         bookedEventMap.totalAmount = totalAmount;
         bookedEventMap.managementAmount = managementAmount;
         def bookedEventId = bookedEventMap.get("id");
-        int updateRes = sql.executeUpdate("UPDATE booked_events SET title = ?.name,event_type_id = ?.eventTypeId, " +
+        int updateRes = sql.executeUpdate("UPDATE booked_event SET title = ?.name,event_type_id = ?.eventTypeId, " +
                 "management_amount = ?.managementAmount, other_information = ?.otherInformation, attendees = ?.attendees" +
                 "total_amount = ?.totalAmount WHERE id = ?.id",bookedEventMap);
 
@@ -170,182 +173,182 @@ class BookEventService {
                         b_events.attendees,
                         b_events.total_amount,
                         b_events.greening_status,
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS  design_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS design_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS design_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS  design_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS  mc_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS mc_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS mc_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS  mc_status,
                         
                         (SELECT
-                        venues."id"
+                        venue."id"
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_id,
                         (SELECT
-                        venues."name"
+                        venue."name"
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_name,
                         (SELECT
-                        venues."location"
+                        venue."location"
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_location,
                         (SELECT
                         planned_event_details.status
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_status,
-                        (SELECT user_id FROM event_planner_allocations WHERE event_id = b_events."id" AND status = TRUE) as planner_id
+                        (SELECT user_id FROM event_planner_allocation WHERE event_id = b_events."id" AND status = TRUE) as planner_id
                         FROM
-                        booked_events b_events
+                        booked_event b_events
                         INNER JOIN event_type ON b_events.event_type_id = event_type."id"
                         WHERE
                         b_events.client_id = ?.clientId
@@ -353,16 +356,16 @@ class BookEventService {
         def countQuery2 = """SELECT
                             COUNT(*)
                             FROM
-                            booked_events b_events
+                            booked_event b_events
                             INNER JOIN event_type ON b_events.event_type_id = event_type."id"
                             WHERE
                             b_events.client_id = ?.clientId
                             LIMIT ?.limit OFFSET ?.start""";
 
-        return CommonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
+        return commonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
     }
 
-    BaseApiResponse getAllBookedEvents(Map parameterMap){
+    BaseApiResponse getAllBookedEventsDeprecated(Map parameterMap){
         def params = MyUtil.flattenListParam(parameterMap);
         Map sqlParams = [start: 0, limit: 5];
         def countParamStatus = true;
@@ -385,204 +388,292 @@ class BookEventService {
                         b_events.attendees,
                         b_events.total_amount,
                         b_events.greening_status,
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 0) AS security_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 1) AS catering_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 2) AS entertainment_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS  design_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS design_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS design_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 3) AS  design_status,
                         
-                        (SELECT(SELECT providers."id" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."id" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS  mc_id,
-                        (SELECT(SELECT providers."name" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider.title FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS mc_name,
-                        (SELECT(SELECT providers."cost" FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        (SELECT(SELECT provider."cost" FROM planned_event_details 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS mc_amount,
                         (SELECT(SELECT planned_event_details.status FROM planned_event_details 
-                        INNER JOIN providers ON planned_event_details.provider_id = providers."id"
-                        INNER JOIN provider_category ON providers.category_id = provider_category."id"
-                        WHERE providers.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
+                        INNER JOIN provider ON planned_event_details.provider_id = provider."id"
+                        INNER JOIN provider_category ON provider.category_id = provider_category."id"
+                        WHERE provider.category_id = pc."id" AND planned_event_details.event_id = b_events."id") 
                         FROM
                         provider_category pc
                         LIMIT 1 OFFSET 4) AS  mc_status,
                         
                         (SELECT
-                        venues."id"
+                        venue."id"
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_id,
                         (SELECT
-                        venues."name"
+                        venue."name"
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_name,
                         (SELECT
-                        venues."location"
+                        venue."location"
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_location,
                         (SELECT
                         planned_event_details.status
                         FROM
                         planned_event_details
-                        INNER JOIN venues ON planned_event_details.venue_id = venues."id"
+                        INNER JOIN venue ON planned_event_details.venue_id = venue."id"
                         WHERE
                         planned_event_details.event_id = b_events."id") as venue_status,
-                        (SELECT user_id FROM event_planner_allocations WHERE event_id = b_events."id" AND status = TRUE) as planner_id
+                        (SELECT user_id FROM event_planner_allocation WHERE event_id = b_events."id" AND status = TRUE) as planner_id
                         FROM
-                        booked_events b_events
+                        booked_event b_events
                         INNER JOIN event_type ON b_events.event_type_id = event_type."id"
                         LIMIT ?.limit OFFSET ?.start""";
         def countQuery2 = """SELECT
                             COUNT(*)
                             FROM
-                            booked_events b_events
+                            booked_event b_events
                             INNER JOIN event_type ON b_events.event_type_id = event_type."id"
                             LIMIT ?.limit OFFSET ?.start""";
 
-        return CommonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
+        return commonDbFunctions.returnJsonFromQueryWithCount(sqlQuery2, countQuery2, sqlParams, countParamStatus);
     }
 
     BaseApiResponse bookEvent(EventCreateDto bookedEventDetails, HttpServletRequest request, Principal principal) {
-        BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "")
+        BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "Failed to book event")
 //        String currentUser  = principal.getName()
-//        Long userId = CommonDbFunctions.getUserIdFromEmail(currentUser)
-        String currentUser = "user.test@gmail.com"
+//        Long userId = commonDbFunctions.getUserIdFromEmail(currentUser)
+        String currentUser = "muriithi91@gmail.com"
         Long userId = 1L
         Long insertRes = insertBookedEventDetails(bookedEventDetails, userId)
         if(insertRes!=null){
             auditService.logAuditEvent("Book Event",request.getRemoteAddr(),currentUser,insertRes+"")
             res.message = "Event booked successfully"
         }
+
+        return res
+    }
+
+    BaseApiResponse getAllBookedEvents(Map parameterMap){
+        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "Success" [])
+        Sql sql = new Sql(dataSource)
+        def events = sql.rows("""
+                                                        SELECT 
+                                                               booked_event.id, 
+                                                               et.name AS eventType, 
+                                                               booked_event.title, 
+                                                               booked_event.attendees, 
+                                                               booked_event.other_information,
+                                                               booked_event.client_id, 
+                                                               booked_event.event_type_id, 
+                                                               booked_event.greening_status, 
+                                                               booked_event.status,
+                                                               booked_event.management_amount,
+                                                               booked_event.total_amount
+                                                        FROM booked_event 
+                                                            INNER JOIN event_type et on et.id = booked_event.event_type_id""");
+        def providerQuery ="""
+                                    SELECT 
+                                        category.code, 
+                                        category.title AS category_title, 
+                                        provider.title, 
+                                        provider."cost", 
+                                        details.provider_id, 
+                                        details.status 
+                                    FROM planned_event_details details
+                                    INNER JOIN provider ON provider."id" = details.provider_id
+                                    INNER JOIN provider_category category ON category.id = provider.category_id
+                                    WHERE event_id = ? AND venue_id IS NULL
+                                    """
+
+        def venueQuery = """
+                                SELECT 
+                                    venue_id, 
+                                    venue."name", 
+                                    venue."location", 
+                                    venue.amount, 
+                                    details.status 
+                                FROM planned_event_details details
+                                INNER JOIN venue ON venue."id" = details.venue_id
+                                WHERE venue_id IS NOT NULL and event_id = ?
+                             """
+        List eventsDetails = []
+        events.each{
+            def eventId = it.get("id")
+            def providerDetails = sql.rows(providerQuery, eventId)
+            def venueDetails = sql.firstRow(venueQuery, eventId)
+            def plannerId = sql.firstRow("SELECT planner_id FROM planned_event_details WHERE event_id = ? ", eventId).get("planner_id")
+            Map groupedProviders = [:]
+            providerDetails.each{
+                Map structureProvider = [:]
+                structureProvider.put("providerId", it.provider_id)
+                structureProvider.put("title", it.title)
+                structureProvider.put("cost", it.cost)
+                structureProvider.put("plannedStatus", it.status)
+                groupedProviders.put(it.code, structureProvider)
+            }
+            Map structureVenue = [:]
+            structureVenue.put("venueId", venueDetails.get("venue_id"))
+            structureVenue.put("name", venueDetails.get("name"))
+            structureVenue.put("location", venueDetails.get("location"))
+            structureVenue.put("amount", venueDetails.get("amount"))
+            structureVenue.put("plannedStatus", venueDetails.get("status"))
+            groupedProviders.put("venue", structureVenue)
+            Map event = [:]
+            event.put("eventId", eventId)
+            event.put("title", it.get("title"))
+            event.put("clientId", it.get("client_id"))
+            event.put("eventTypeId", it.get("event_type_id"))
+            event.put("eventType", it.get("eventType"))
+            event.put("attendees", it.get("attendees"))
+            event.put("otherInformation", it.get("other_information"))
+            event.put("managementAmount", it.get("management_amount"))
+            event.put("totalAmount", it.get("total_amount"))
+            event.put("status", it.get("status"))
+            event.put("greeningStatus", it.get("greening_status"))
+            event.put("plannerId", plannerId)
+            event.put("providers", groupedProviders)
+            eventsDetails.add(event)
+        }
+        sql.close()
+        res.data = eventsDetails
+        res
     }
 }

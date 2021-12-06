@@ -24,7 +24,7 @@ public class PasswordResetToken {
             nullable = false,
             updatable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "token",
@@ -41,7 +41,7 @@ public class PasswordResetToken {
     private Long userId;
 
     @Column(
-            name ="addDate",
+            name ="add_date",
             nullable = false,
             columnDefinition = "TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"
     )
@@ -68,5 +68,50 @@ public class PasswordResetToken {
         this.userId = userId;
     }
 
+    public PasswordResetToken(String token, Long userId, LocalDate addDate, Boolean isActive) {
+        this.token = token;
+        this.userId = userId;
+        this.addDate = addDate;
+        this.isActive = isActive;
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public LocalDate getAddDate() {
+        return addDate;
+    }
+
+    public void setAddDate(LocalDate addDate) {
+        this.addDate = addDate;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
 }

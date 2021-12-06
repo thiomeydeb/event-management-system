@@ -22,11 +22,15 @@ class EventManagementService {
 
     private final DataSource dataSource
     private final AuditService auditService
+    private final CommonDbFunctions commonDbFunctions
 
     @Autowired
-    EventManagementService(DataSource dataSource, AuditService auditService) {
+    EventManagementService(DataSource dataSource,
+                           AuditService auditService,
+                           CommonDbFunctions commonDbFunctions) {
         this.dataSource = dataSource
         this.auditService = auditService
+        this.commonDbFunctions = commonDbFunctions
     }
 
     BaseApiResponse linkPlanner(def parameterMap){
@@ -129,7 +133,7 @@ class EventManagementService {
                                                Principal principal){
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "greening update successful")
         String userName = principal.getName()
-        long userId = CommonDbFunctions.getUserIdFromEmail(userName)
+        long userId = commonDbFunctions.getUserIdFromEmail(userName)
         long eventId = Long.parseLong(webRequest.getParameter("eventId"))
         Sql sql = new Sql(dataSource)
         List selectedGreeningDetails = new JsonSlurper().parseText(greeningDetails)

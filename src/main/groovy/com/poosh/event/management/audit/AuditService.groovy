@@ -14,11 +14,15 @@ import javax.sql.DataSource
 class AuditService {
     private final UserService userService;
     private final DataSource dataSource;
+    private final CommonDbFunctions commonDbFunctions
 
     @Autowired
-    AuditService(UserService userService, DataSource dataSource) {
+    AuditService(UserService userService,
+                 DataSource dataSource,
+                 CommonDbFunctions commonDbFunctions) {
         this.userService = userService
         this.dataSource = dataSource
+        this.commonDbFunctions = commonDbFunctions
     }
 
     BaseApiResponse getLogInLogs(def parameterMap){
@@ -30,7 +34,7 @@ class AuditService {
         def queryFilter = ipFilter+statusFilter;
         def query = """SELECT * FROM user_login_logs WHERE date(login_time) BETWEEN date(?.from) AND date(?.to) """+queryFilter+" LIMIT ?.limit OFFSET ?.start";
         def countQuery = """SELECT COUNT(1) FROM user_login_logs WHERE date(login_time) BETWEEN date(?.from) AND date(?.to) """+queryFilter;
-        return  CommonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, params, true);
+        return  commonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, params, true);
 
     }
 
@@ -50,7 +54,7 @@ class AuditService {
                         date(transaction_time) BETWEEN date(?.from) AND date(?.to) """+queryFilter+" LIMIT ?.limit OFFSET ?.start";
 
         def countQuery = """SELECT COUNT(1) FROM user_event_log WHERE date(transaction_time) BETWEEN date(?.from) AND date(?.to) """+queryFilter;
-        return  CommonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, params, true);
+        return  commonDbFunctions.returnJsonFromQueryWithCount(query,countQuery, params, true);
 
     }
 

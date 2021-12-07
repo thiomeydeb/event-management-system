@@ -1,156 +1,122 @@
-import { useState, useEffect } from 'react';
-import { useFormik, Form, FormikProvider } from 'formik';
-// material
-import { Stack, TextField, Select } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import MenuItem from '@mui/material/MenuItem';
-import axios from 'axios';
-import { eventSchema } from './validation/event';
-import { basicAuthBase64Header, apiBasePath } from '../../constants/defaultValues';
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import BasicEventDetails from './BasicEventDetails';
+import ProgressDetails from './ProgressDetails';
+import ProviderDetails from './ProviderDetails';
 
-const providerCategoryUrl = apiBasePath.concat('provider-category');
+const Item = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary
+}));
 
-export default function EventProgress({
-  setViewMode,
-  setAlertOptions,
-  url,
-  getProviders,
-  updateData
-}) {
-  const data = updateData === undefined ? {} : updateData;
-  const categoryId = data.providerCategory ? data.providerCategory.id : 0;
-  const categoryName = data.providerCategory ? data.providerCategory.name : '';
-  const [category, setCategory] = useState({ id: categoryId, name: categoryName });
-  const [providerCategories, setProviderCategories] = useState([
-    { id: categoryId, name: categoryName }
-  ]);
-  const updateUrl = url.concat('/').concat(data.id);
-
-  const getProviderCategories = () => {
-    axios(providerCategoryUrl, {
-      method: 'GET',
-      headers: {
-        authorization: basicAuthBase64Header
-      }
-    })
-      .then((res) => {
-        setProviderCategories(res.data.data);
-      })
-      .catch((error) => {
-        setAlertOptions({
-          open: true,
-          message: 'failed to fetch provider category data',
-          severity: 'error'
-        });
-        console.log(error);
-      });
-  };
-
-  useEffect(() => {
-    getProviderCategories();
-  }, []);
-
-  const getCategoryIndex = (id) => {
-    for (let i = 0; i < providerCategories.length; i += 1) {
-      if (providerCategories[i].id === id) {
-        return i;
-      }
-    }
-    return '';
-  };
-
-  const formik = useFormik({
-    initialValues: {
-      title: updateData.title,
-      cost: updateData.cost,
-      categoryId
-    },
-    validationSchema: eventSchema,
-    onSubmit: (values, formikActions) => {
-      console.log(values);
-      formikActions.setSubmitting(false);
-      axios(updateUrl, {
-        method: 'PUT',
-        data: values,
-        headers: {
-          authorization: basicAuthBase64Header
-        }
-      })
-        .then((res) => {
-          formikActions.resetForm();
-          formikActions.setSubmitting(false);
-          setAlertOptions({
-            open: true,
-            message: 'update successful',
-            severity: 'success'
-          });
-          getProviders();
-          setViewMode('list');
-        })
-        .catch((error) => {
-          setAlertOptions({
-            open: true,
-            message: 'failed to update provider',
-            severity: 'error'
-          });
-          formikActions.setSubmitting(false);
-          console.log(error);
-        });
-    }
-  });
-
-  const { errors, touched, isSubmitting, getFieldProps, setFieldValue, setFieldTouched } = formik;
-
-  const handleChange = (event) => {
-    setCategory(event.target.value);
-    setFieldValue('categoryId', event.target.value.id);
-    setFieldTouched('categoryId', true);
-  };
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
 
   return (
-    <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate>
-        <Stack spacing={3}>
-          <TextField
-            fullWidth
-            label="Event title"
-            margin="dense"
-            {...getFieldProps('title')}
-            error={Boolean(touched.title && errors.title)}
-            helperText={touched.title && errors.title}
-          />
-          <Select
-            id="outlined-select-category"
-            label="Category"
-            value={providerCategories[getCategoryIndex(category.id)]}
-            onChange={handleChange}
-            error={Boolean(touched.categoryId && errors.categoryId)}
-          >
-            {providerCategories.map((option, index) => (
-              <MenuItem key={option.id} value={option}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField
-            fullWidth
-            label="Cost"
-            margin="dense"
-            {...getFieldProps('cost')}
-            error={Boolean(touched.cost && errors.cost)}
-            helperText={touched.cost && errors.cost}
-          />
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-          >
-            Save
-          </LoadingButton>
-        </Stack>
-      </Form>
-    </FormikProvider>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`
+  };
+}
+
+export default function EventProgress({ eventData, setViewMode }) {
+  let statusColor = 'error';
+  let statusMessage = 'undefined';
+  let greeningStatusColor = 'error';
+  let greeningStatusMessage = 'undefined';
+  if (eventData.status === 0) {
+    statusColor = 'warning';
+    statusMessage = 'Pending';
+  } else if (eventData.status === 1) {
+    statusColor = 'info';
+    statusMessage = 'Planner Assigned';
+  } else if (eventData.status === 2) {
+    statusColor = 'primary';
+    statusMessage = 'In progress';
+  } else if (eventData.status === 3) {
+    statusColor = 'success';
+    statusMessage = 'Complete';
+  } else if (eventData.status === 4) {
+    statusColor = 'error';
+    statusMessage = 'Cancelled';
+  }
+
+  if (eventData.status === 0) {
+    greeningStatusColor = 'warning';
+    greeningStatusMessage = 'Pending';
+  } else if (eventData.status === 1) {
+    greeningStatusColor = 'info';
+    greeningStatusMessage = 'Planner Assigned';
+  } else if (eventData.status === 2) {
+    greeningStatusColor = 'primary';
+    greeningStatusMessage = 'In progress';
+  } else if (eventData.status === 3) {
+    greeningStatusColor = 'success';
+    greeningStatusMessage = 'Complete';
+  } else if (eventData.status === 4) {
+    greeningStatusColor = 'error';
+    statusMessage = 'Cancelled';
+  }
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="Event Details" {...a11yProps(0)} />
+          <Tab label="Provider Details" {...a11yProps(1)} />
+          <Tab label="Progress Details" {...a11yProps(2)} />
+        </Tabs>
+      </Box>
+      <TabPanel value={value} index={0}>
+        <BasicEventDetails
+          eventData={eventData}
+          greeningStatusMessage={greeningStatusMessage}
+          statusMessage={statusMessage}
+          greeningColor={greeningStatusColor}
+          statusColor={statusColor}
+        />
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <ProviderDetails eventData={eventData} />
+      </TabPanel>
+      <TabPanel value={value} index={2}>
+        <ProgressDetails eventData={eventData} />
+      </TabPanel>
+    </Box>
   );
 }

@@ -16,7 +16,7 @@ import EventMoreMenu from './menu/EventMoreMenu';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMoreIcon';
 
 function Row(props) {
-  const { row, setViewMode, onEditClick } = props;
+  const { row, setViewMode, onChangeViewClick } = props;
   let statusColor = 'error';
   let statusMessage = 'undefined';
   let greeningStatusColor = 'error';
@@ -93,7 +93,11 @@ function Row(props) {
           </Label>
         </TableCell>
         <TableCell align="right">
-          <EventMoreMenu row={row} setViewMode={setViewMode} onEditClick={onEditClick} />
+          <EventMoreMenu
+            row={row}
+            setViewMode={setViewMode}
+            onChangeViewClick={onChangeViewClick}
+          />
         </TableCell>
       </TableRow>
     </>
@@ -109,7 +113,7 @@ Row.propTypes = {
   }).isRequired
 };
 
-export default function EventList({ events, setViewMode, onEditClick }) {
+export default function EventList({ events, setViewMode, onChangeViewClick }) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="Providers">
@@ -126,7 +130,12 @@ export default function EventList({ events, setViewMode, onEditClick }) {
         </TableHead>
         <TableBody>
           {events.map((row) => (
-            <Row key={row.id} row={row} setViewMode={setViewMode} onEditClick={onEditClick} />
+            <Row
+              key={row.id}
+              row={row}
+              setViewMode={setViewMode}
+              onChangeViewClick={onChangeViewClick}
+            />
           ))}
         </TableBody>
       </Table>

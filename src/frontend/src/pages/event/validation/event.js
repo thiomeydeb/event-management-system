@@ -17,7 +17,7 @@ export const eventSchema = Yup.object({
     .min(3, 'Information must contain 3 or more characters')
     .max(100, 'Information must not be longer that 100 characters')
     .required('Information required'),
-  venue: Yup.number().min(0, 'Select venue').required('Venue required'),
+  venueId: Yup.number().min(0, 'Select venue').required('Venue required'),
   entertainmentId: Yup.number().min(0, 'Select entertainment').required('Entertainment required'),
   cateringId: Yup.number().min(0, 'Select catering').required('Catering required'),
   securityId: Yup.number().min(0, 'Select security').required('Security required'),

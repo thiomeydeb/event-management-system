@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
-import editFill from '@iconify/icons-eva/edit-fill';
+import eyeFill from '@iconify/icons-eva/eye-fill';
 import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
@@ -11,7 +11,7 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/mat
 
 // ----------------------------------------------------------------------
 
-export default function EventMoreMenu({ row, onEditClick }) {
+export default function EventMoreMenu({ row, onChangeViewClick }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const event = row === undefined ? {} : row;
@@ -35,12 +35,12 @@ export default function EventMoreMenu({ row, onEditClick }) {
           component={RouterLink}
           to="#"
           sx={{ color: 'text.secondary' }}
-          onClick={() => onEditClick(event)}
+          onClick={() => onChangeViewClick(event, 'view')}
         >
           <ListItemIcon>
-            <Icon icon={editFill} width={25} height={25} />
+            <Icon icon={eyeFill} width={25} height={25} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary="View" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>

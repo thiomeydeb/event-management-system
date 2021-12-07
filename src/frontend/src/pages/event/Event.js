@@ -9,9 +9,9 @@ import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import AddEvent from './AddEvent';
 import EventList from './EventList';
-import EventProgress from './EventProgress';
 import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
 import Notification from '../../components/custom/Notification';
+import EventProgress from './EventProgress';
 
 const eventsUrl = apiBasePath.concat('event');
 
@@ -79,9 +79,9 @@ export default function Event() {
         });
       });
   };
-  const onEditClick = (eventData) => {
+  const changeViewClick = (eventData, view) => {
     setEditData(eventData);
-    setViewMode('edit');
+    setViewMode(view);
   };
   return (
     <Page title="Event | POSH Events">
@@ -117,7 +117,11 @@ export default function Event() {
             {/* Display component based on view mode state */}
             {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
             {viewMode === 'list' && (
-              <EventList events={events} setViewMode={setViewMode} onEditClick={onEditClick} />
+              <EventList
+                events={events}
+                setViewMode={setViewMode}
+                onChangeViewClick={changeViewClick}
+              />
             )}
             {viewMode === 'add' && (
               <AddEvent
@@ -127,7 +131,9 @@ export default function Event() {
                 getEvents={getEvents}
               />
             )}
-            {viewMode === 'progress' && <EventProgress setViewMode={setViewMode} />}
+            {viewMode === 'view' && (
+              <EventProgress setViewMode={setViewMode} eventData={editData} />
+            )}
           </Scrollbar>
         </Card>
         <Notification

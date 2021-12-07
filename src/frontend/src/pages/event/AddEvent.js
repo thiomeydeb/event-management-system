@@ -11,6 +11,7 @@ import { eventSchema } from './validation/event';
 
 const eventTypeUrl = apiBasePath.concat('event-type');
 const providerUrl = apiBasePath.concat('provider');
+const venueUrl = apiBasePath.concat('venue');
 const textFieldStyle = { width: '49%', float: 'right' };
 const selectStyle = { width: '50%', marginTop: '8px' };
 
@@ -31,6 +32,10 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
   const [security, setSecurity] = useState([]);
   const [mc, setMc] = useState([]);
   const [design, setDesign] = useState([]);
+  const [total, setTotal] = useState(20);
+  const [managementAmount, setManagementAmount] = useState(0);
+
+  const postUrl = url.concat('/book');
 
   const getEventTypes = () => {
     axios(eventTypeUrl, {
@@ -50,6 +55,37 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
         });
         console.log(error);
       });
+  };
+
+  useEffect(() => {
+    calculateTotalAmount();
+  }, [
+    selectedEntertainment,
+    selectedVenue,
+    selectedDesign,
+    selectedSecurity,
+    selectedMc,
+    selectedCatering,
+    managementAmount
+  ]);
+
+  const calculateTotalAmount = () => {
+    const entertainmentCost = selectedEntertainment.cost ? selectedEntertainment.cost : 0;
+    const venueCost = selectedVenue.amount ? selectedVenue.amount : 0;
+    const designCost = selectedDesign.cost ? selectedDesign.cost : 0;
+    const securityCost = selectedSecurity.cost ? selectedSecurity.cost : 0;
+    const mcCost = selectedMc.cost ? selectedMc.cost : 0;
+    const cateringCost = selectedCatering.cost ? selectedCatering.cost : 0;
+    const total =
+      entertainmentCost +
+      venueCost +
+      designCost +
+      securityCost +
+      mcCost +
+      cateringCost +
+      managementAmount;
+    setFieldValue('totalAmount', total);
+    setTotal(total);
   };
 
   const getProviders = () => {
@@ -78,7 +114,6 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
 
         const mc = _.filter(providers, ['providerCategory.code', 'mc']);
         setMc(mc);
-        console.log(res.data.data);
 
         setProviders(res.data.data);
       })
@@ -92,9 +127,31 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
       });
   };
 
+  const getVenues = () => {
+    axios(venueUrl, {
+      method: 'GET',
+      headers: {
+        authorization: basicAuthBase64Header
+      }
+    })
+      .then((res) => {
+        const venues = res.data.data;
+        setVenues(venues);
+      })
+      .catch((error) => {
+        setAlertOptions({
+          open: true,
+          message: 'failed to fetch venues',
+          severity: 'error'
+        });
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     getEventTypes();
     getProviders();
+    getVenues();
   }, []);
 
   const getEventIndex = (id, array) => {
@@ -123,7 +180,7 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
     },
     validationSchema: eventSchema,
     onSubmit: (values, formikActions) => {
-      axios(url, {
+      axios(postUrl, {
         method: 'POST',
         data: values,
         headers: {
@@ -152,9 +209,19 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
     }
   });
 
-  const { errors, touched, isSubmitting, getFieldProps, setFieldValue, setFieldTouched } = formik;
+  const {
+    errors,
+    touched,
+    isSubmitting,
+    getFieldProps,
+    setFieldValue,
+    setFieldTouched,
+    handleChange,
+    handleBlur,
+    values
+  } = formik;
 
-  const handleChange = (event, setSelectedOption, field) => {
+  const handleChangeOption = (event, setSelectedOption, field) => {
     setSelectedOption(event.target.value);
     setFieldValue(field, event.target.value.id);
     setFieldTouched(field, true);
@@ -168,23 +235,25 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
             fullWidth
             label="Event title"
             margin="dense"
-            {...getFieldProps('title')}
-            error={Boolean(touched.title && errors.title)}
-            helperText={touched.title && errors.title}
+            {...getFieldProps('name')}
+            error={Boolean(touched.name && errors.name)}
+            helperText={touched.name && errors.name}
           />
-          <Select
+          <TextField
+            select
             id="outlined-select-category"
             label="Event Type"
             value={eventTypes[getEventIndex(selectedEventType.id, eventTypes)]}
-            onChange={(event) => handleChange(event, setSelectedEventType, 'eventTypeId')}
+            onChange={(event) => handleChangeOption(event, setSelectedEventType, 'eventTypeId')}
             error={Boolean(touched.eventTypeId && errors.eventTypeId)}
+            helperText={touched.eventTypeId && errors.eventTypeId}
           >
             {eventTypes.map((option, index) => (
               <MenuItem key={option.id} value={option}>
                 {option.name}
               </MenuItem>
             ))}
-          </Select>
+          </TextField>
           <TextField
             fullWidth
             label="Attendees"
@@ -201,17 +270,24 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="outlined-select-category"
               label="Venue"
               value={venues[getEventIndex(selectedVenue.id, venues)]}
-              onChange={(event) => handleChange(event, setSelectedVenue, 'venueId')}
+              onChange={(event) => handleChangeOption(event, setSelectedVenue, 'venueId')}
               error={Boolean(touched.venueId && errors.venueId)}
               helperText={touched.venueId && errors.venueId}
             >
               {venues.map((option, index) => (
                 <MenuItem key={option.id} value={option}>
-                  {option.title}
+                  {option.name}
                 </MenuItem>
               ))}
             </TextField>
-            <TextField style={textFieldStyle} id="venueAmountField" label="Amount" margin="dense" />
+            <TextField
+              style={textFieldStyle}
+              id="venueAmountField"
+              label=""
+              margin="dense"
+              value={selectedVenue.amount}
+              InputProps={{ readOnly: true }}
+            />
           </div>
 
           <div>
@@ -221,7 +297,9 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="outlined-select-category"
               label="Entertainment"
               value={entertainment[getEventIndex(selectedEntertainment.id, entertainment)]}
-              onChange={(event) => handleChange(event, setSelectedEntertainment, 'entertainmentId')}
+              onChange={(event) =>
+                handleChangeOption(event, setSelectedEntertainment, 'entertainmentId')
+              }
               error={Boolean(touched.entertainmentId && errors.entertainmentId)}
               helperText={touched.entertainmentId && errors.entertainmentId}
             >
@@ -236,6 +314,8 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="entertainmentAmountField"
               label="Amount"
               margin="dense"
+              value={selectedEntertainment.cost}
+              InputProps={{ readOnly: true }}
             />
           </div>
           <div>
@@ -245,7 +325,7 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="outlined-select-category"
               label="Catering"
               value={catering[getEventIndex(selectedCatering.id, catering)]}
-              onChange={(event) => handleChange(event, setSelectedCatering, 'cateringId')}
+              onChange={(event) => handleChangeOption(event, setSelectedCatering, 'cateringId')}
               error={Boolean(touched.cateringId && errors.cateringId)}
               helperText={touched.cateringId && errors.cateringId}
             >
@@ -260,6 +340,8 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="cateringAmountField"
               label="Amount"
               margin="dense"
+              value={selectedCatering.cost}
+              InputProps={{ readOnly: true }}
             />
           </div>
           <div>
@@ -269,7 +351,7 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="outlined-select-category"
               label="Security"
               value={security[getEventIndex(selectedSecurity.id, security)]}
-              onChange={(event) => handleChange(event, setSelectedSecurity, 'securityId')}
+              onChange={(event) => handleChangeOption(event, setSelectedSecurity, 'securityId')}
               error={Boolean(touched.securityId && errors.securityId)}
               helperText={touched.securityId && errors.securityId}
             >
@@ -284,6 +366,8 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="securityAmountField"
               label="Amount"
               margin="dense"
+              value={selectedSecurity.cost}
+              InputProps={{ readOnly: true }}
             />
           </div>
           <div>
@@ -293,7 +377,7 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="outlined-select-category"
               label="Design"
               value={design[getEventIndex(selectedDesign.id, design)]}
-              onChange={(event) => handleChange(event, setSelectedDesign, 'designId')}
+              onChange={(event) => handleChangeOption(event, setSelectedDesign, 'designId')}
               error={Boolean(touched.designId && errors.designId)}
               helperText={touched.designId && errors.designId}
             >
@@ -308,6 +392,8 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="designAmountField"
               label="Amount"
               margin="dense"
+              value={selectedDesign.cost}
+              InputProps={{ readOnly: true }}
             />
           </div>
           <div>
@@ -317,7 +403,7 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
               id="outlined-select-category"
               label="Master of Ceremony"
               value={mc[getEventIndex(selectedMc.id, mc)]}
-              onChange={(event) => handleChange(event, setSelectedMc, 'mcId')}
+              onChange={(event) => handleChangeOption(event, setSelectedMc, 'mcId')}
               error={Boolean(touched.mcId && errors.mcId)}
               helperText={touched.mcId && errors.mcId}
             >
@@ -327,23 +413,39 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
                 </MenuItem>
               ))}
             </TextField>
-            <TextField style={textFieldStyle} id="mcAmountField" label="Amount" margin="dense" />
+            <TextField
+              style={textFieldStyle}
+              id="mcAmountField"
+              label="Amount"
+              margin="dense"
+              value={selectedMc.cost}
+              InputProps={{ readOnly: true }}
+            />
           </div>
           <TextField
             fullWidth
             label="Management Amount"
             margin="dense"
+            value={managementAmount}
             {...getFieldProps('managementAmount')}
             error={Boolean(touched.managementAmount && errors.managementAmount)}
             helperText={touched.managementAmount && errors.managementAmount}
+            onChange={(e) => {
+              const intAmount = parseInt(e.target.value, 10);
+              setManagementAmount(intAmount);
+              setFieldValue('managementAmount', intAmount);
+            }}
           />
           <TextField
+            id="outlined-read-only-input"
             fullWidth
             label="Total Amount"
+            onChange={handleChange}
             margin="dense"
             {...getFieldProps('totalAmount')}
             error={Boolean(touched.totalAmount && errors.totalAmount)}
             helperText={touched.totalAmount && errors.totalAmount}
+            InputProps={{ readOnly: true }}
           />
           <TextField
             fullWidth

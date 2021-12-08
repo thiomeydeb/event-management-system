@@ -2,10 +2,13 @@ package com.poosh.event.management.audit
 
 import com.poosh.event.management.apiresponse.BaseApiResponse
 import com.poosh.event.management.user.UserService
+import com.poosh.event.management.usereventlogs.UserEventLog
+import com.poosh.event.management.usereventlogs.UserEventLogRepository
 import com.poosh.event.management.utils.CommonDbFunctions
 import com.poosh.event.management.utils.MyUtil
 import groovy.sql.Sql
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 import javax.sql.DataSource
@@ -15,14 +18,17 @@ class AuditService {
     private final UserService userService;
     private final DataSource dataSource;
     private final CommonDbFunctions commonDbFunctions
+    private final UserEventLogRepository userEventLogRepository
 
     @Autowired
     AuditService(UserService userService,
                  DataSource dataSource,
-                 CommonDbFunctions commonDbFunctions) {
+                 CommonDbFunctions commonDbFunctions,
+                 UserEventLogRepository userEventLogRepository) {
         this.userService = userService
         this.dataSource = dataSource
         this.commonDbFunctions = commonDbFunctions
+        this.userEventLogRepository = userEventLogRepository
     }
 
     BaseApiResponse getLogInLogs(def parameterMap){
@@ -66,5 +72,12 @@ class AuditService {
         def insertRes = sql.executeInsert("INSERT INTO user_event_log(action, ip_address, user_id,transaction_time, reference) VALUES (?.action,?.ip,?.userId,current_timestamp,?.reference)",params);
         sql.close();
         return !!insertRes;
+    }
+
+    BaseApiResponse getLogs(){
+        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "success", [], 0)
+        def logs = userEventLogRepository.findAll();
+        res.data = logs
+        return res
     }
 }

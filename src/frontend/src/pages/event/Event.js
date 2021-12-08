@@ -83,11 +83,7 @@ export default function Event() {
       });
   };
 
-  const onLinkPlanner = (eventId, plannerId) => {
-    console.log(eventId);
-    console.log(plannerId);
-    console.log('got here');
-  };
+  const onLinkPlanner = (eventId, plannerId) => {};
 
   const changeViewClick = (eventData, view) => {
     setEditData(eventData);

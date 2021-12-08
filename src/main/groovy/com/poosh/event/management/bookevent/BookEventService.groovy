@@ -3,6 +3,9 @@ package com.poosh.event.management.bookevent
 import com.poosh.event.management.apiresponse.BaseApiResponse
 import com.poosh.event.management.audit.AuditService
 import com.poosh.event.management.bookevent.dto.EventCreateDto
+import com.poosh.event.management.exceptions.BadRequestException
+import com.poosh.event.management.exceptions.InternalServerErrorException
+import com.poosh.event.management.globaldto.IntStatusDto
 import com.poosh.event.management.utils.CommonDbFunctions
 import com.poosh.event.management.utils.MyUtil
 import groovy.json.JsonSlurper
@@ -616,7 +619,8 @@ class BookEventService {
                                         provider.title, 
                                         provider."cost", 
                                         details.provider_id, 
-                                        details.status 
+                                        details.status,
+                                        details.id AS planned_details_id
                                     FROM planned_event_details details
                                     INNER JOIN provider ON provider."id" = details.provider_id
                                     INNER JOIN provider_category category ON category.id = provider.category_id
@@ -629,7 +633,8 @@ class BookEventService {
                                     venue."name", 
                                     venue."location", 
                                     venue.amount, 
-                                    details.status 
+                                    details.status,
+                                    details.id AS planned_details_id 
                                 FROM planned_event_details details
                                 INNER JOIN venue ON venue."id" = details.venue_id
                                 WHERE venue_id IS NOT NULL and event_id = ?
@@ -645,8 +650,10 @@ class BookEventService {
                 Map structureProvider = [:]
                 structureProvider.put("providerId", it.provider_id)
                 structureProvider.put("title", it.title)
+                structureProvider.put("providerCategory", it.category_title)
                 structureProvider.put("cost", it.cost)
                 structureProvider.put("plannedStatus", it.status)
+                structureProvider.put("plannedDetailsId", it.planned_details_id)
                 groupedProviders.put(it.code, structureProvider)
             }
             Map structureVenue = [:]
@@ -655,6 +662,7 @@ class BookEventService {
             structureVenue.put("location", venueDetails.get("location"))
             structureVenue.put("amount", venueDetails.get("amount"))
             structureVenue.put("plannedStatus", venueDetails.get("status"))
+            structureVenue.put("plannedDetailsId", venueDetails.get("planned_details_id"))
             groupedProviders.put("venue", structureVenue)
             Map event = [:]
             event.put("eventId", eventId)
@@ -675,5 +683,38 @@ class BookEventService {
         sql.close()
         res.data = eventsDetails
         res
+    }
+
+    BaseApiResponse updateEventStatus(long eventId, IntStatusDto body) {
+        //initialize response object
+        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "update successful", [])
+
+        //fetch event type by id from db using Event Repository
+        def optionalEvent= bookedEventRepository.findById(eventId)
+
+        /*
+         *check if a record was returned.
+         *if a record is not present throw an exception
+         *if a record is present, update the status
+        */
+        if (optionalEvent.isPresent()) {
+            //retrieve event type from optionalEventType
+            def event = optionalEvent.get()
+
+            //perform update by saving using eventTypeRepository
+            def update = bookedEventRepository.updateBookedEventStatus(eventId, body.status)
+            if(update < 1){
+                throw new InternalServerErrorException("Update failed")
+            }
+
+            event.setStatus(body.status)
+
+            //assign updated event details to response data field
+            res.data = event
+        } else {
+            //throw
+            throw new BadRequestException(String.format("record with id %s not found", eventId), [])
+        }
+        return res
     }
 }

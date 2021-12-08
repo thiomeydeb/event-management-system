@@ -14,6 +14,8 @@ import Notification from '../../components/custom/Notification';
 import EventProgress from './EventProgress';
 
 const eventsUrl = apiBasePath.concat('event');
+const eventManagementUrl = apiBasePath.concat('event-management');
+const linkPlannerUrl = eventManagementUrl.concat('/link');
 
 export default function Event() {
   const [viewMode, setViewMode] = useState('list');
@@ -33,6 +35,7 @@ export default function Event() {
         }
       })
       .then((res) => {
+        console.log(res);
         setEvents(res.data.data);
         if (view === 'list') {
           setAlertOptions({
@@ -79,6 +82,13 @@ export default function Event() {
         });
       });
   };
+
+  const onLinkPlanner = (eventId, plannerId) => {
+    console.log(eventId);
+    console.log(plannerId);
+    console.log('got here');
+  };
+
   const changeViewClick = (eventData, view) => {
     setEditData(eventData);
     setViewMode(view);
@@ -132,7 +142,12 @@ export default function Event() {
               />
             )}
             {viewMode === 'view' && (
-              <EventProgress setViewMode={setViewMode} eventData={editData} />
+              <EventProgress
+                setViewMode={setViewMode}
+                eventData={editData}
+                onLinkPlanner={onLinkPlanner}
+                setAlertOptions={setAlertOptions}
+              />
             )}
           </Scrollbar>
         </Card>

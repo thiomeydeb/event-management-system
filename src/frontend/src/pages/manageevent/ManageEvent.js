@@ -7,15 +7,17 @@ import editFill from '@iconify/icons-eva/edit-fill';
 import axios from 'axios';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
-import EventList from '../event/EventList';
+import ManageEventList from './ManageEventList';
 import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
 import Notification from '../../components/custom/Notification';
 import EventProgress from '../event/EventProgress';
 
 const eventsUrl = apiBasePath.concat('event');
+const eventManagementUrl = apiBasePath.concat('event-management');
+const linkPlannerUrl = eventManagementUrl.concat('/link');
 const plannedEventDetailsUrl = apiBasePath.concat('planned-event-details');
 
-export default function PlanEvent() {
+export default function ManageEvent() {
   const [viewMode, setViewMode] = useState('list');
   const [alertOptions, setAlertOptions] = useState({
     open: false,
@@ -81,6 +83,60 @@ export default function PlanEvent() {
         });
       });
   };
+
+  const updateEventStatus = (eventId, values) => {
+    const url = eventsUrl.concat('/status/').concat(eventId);
+    axios(url, {
+      method: 'PUT',
+      headers: {
+        authorization: basicAuthBase64Header
+      },
+      data: values
+    })
+      .then((res) => {
+        getEvents();
+        setAlertOptions({
+          open: true,
+          message: 'status update successful',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        console.log(error.toJSON);
+        setAlertOptions({
+          open: true,
+          message: 'status update failed',
+          severity: 'error'
+        });
+      });
+  };
+
+  const onLinkPlanner = (eventId, plannerId) => {
+    axios(linkPlannerUrl, {
+      method: 'POST',
+      headers: {
+        authorization: basicAuthBase64Header
+      },
+      data: { eventId, userId: plannerId }
+    })
+      .then((res) => {
+        getEvents();
+        setAlertOptions({
+          open: true,
+          message: res.data.message,
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        console.log(error.toJSON());
+        setAlertOptions({
+          open: true,
+          message: 'failed to link planner',
+          severity: 'error'
+        });
+      });
+  };
+
   const changeViewClick = (eventData, view) => {
     setEditData(eventData);
     setViewMode(view);
@@ -90,7 +146,7 @@ export default function PlanEvent() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Plan Event' : 'Add Event'}
+            Manage Event
           </Typography>
           <Button
             variant="contained"
@@ -119,18 +175,20 @@ export default function PlanEvent() {
             {/* Display component based on view mode state */}
             {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
             {viewMode === 'list' && (
-              <EventList
+              <ManageEventList
                 events={events}
                 setViewMode={setViewMode}
                 onChangeViewClick={changeViewClick}
+                updateEventStatus={updateEventStatus}
               />
             )}
             {viewMode === 'view' && (
               <EventProgress
                 setViewMode={setViewMode}
                 eventData={editData}
-                userType="planner"
+                userType="manager"
                 updateProviderStatus={updateProviderStatus}
+                onLinkPlanner={onLinkPlanner}
               />
             )}
           </Scrollbar>

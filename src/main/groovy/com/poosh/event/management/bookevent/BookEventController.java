@@ -2,6 +2,7 @@ package com.poosh.event.management.bookevent;
 
 import com.poosh.event.management.apiresponse.BaseApiResponse;
 import com.poosh.event.management.bookevent.dto.EventCreateDto;
+import com.poosh.event.management.globaldto.IntStatusDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.security.Principal;
 
 @RestController
@@ -40,6 +42,12 @@ public class BookEventController {
     @GetMapping(value = "/deprecated")
     public BaseApiResponse getAllBookedEventsDeprecated(WebRequest request){
         return bookEventService.getAllBookedEventsDeprecated(request.getParameterMap());
+    }
+
+    @PutMapping(value = "status/{eventId}")
+    public BaseApiResponse updateEventStatus(@RequestBody @Valid IntStatusDto body,
+                                                        @PathVariable("eventId") @Min(1) Long eventId){
+        return bookEventService.updateEventStatus(eventId, body);
     }
 
 }

@@ -239,7 +239,7 @@ class UserService {
         def queryFilterPrefix = "";
 
         if(fetchAdminOnly){
-            adminFilterQuery  = " WHERE EXISTS (SELECT * FROM admin_users WHERE user_id = users.id AND is_active = TRUE) ";
+            adminFilterQuery  = " WHERE EXISTS (SELECT * FROM admin_user WHERE user_id = users.id AND is_active = TRUE) ";
             queryFilterPrefix = " AND "
 
         }else{
@@ -266,7 +266,7 @@ class UserService {
                 users.identification_number "identificationNumber",
                 users.is_active "isActive",
                 users.company_name "companyName",
-                EXISTS (SELECT * FROM admin_users WHERE user_id = users.id AND is_active = TRUE) AS "isAdmin"
+                EXISTS (SELECT * FROM admin_user WHERE user_id = users.id AND is_active = TRUE) AS "isAdmin"
                 FROM
                 users """+queryFilter+" LIMIT ?.limit OFFSET ?.start";
 
@@ -524,7 +524,7 @@ class UserService {
         def queryFilterSuffix = " WHERE ";
 
         if(fetchAdminOnly){
-            adminFilterQuery  = " WHERE EXISTS (SELECT * FROM admin_users WHERE user_id = users.id AND is_active = TRUE) ";
+            adminFilterQuery  = " WHERE EXISTS (SELECT * FROM admin_user WHERE user_id = users.id AND is_active = TRUE) ";
             queryFilterPrefix = " AND "
 
         }else{
@@ -551,7 +551,7 @@ class UserService {
                 users.identification_number "identificationNumber",
                 users.is_active "isActive",
                 users.company_name "companyName",
-                EXISTS (SELECT * FROM admin_users WHERE user_id = users.id AND is_active = TRUE) AS "isAdmin"
+                EXISTS (SELECT * FROM admin_user WHERE user_id = users.id AND is_active = TRUE) AS "isAdmin"
                 FROM
                 users
                 INNER JOIN user_role_allocations ON users.id = user_role_allocations.user_id

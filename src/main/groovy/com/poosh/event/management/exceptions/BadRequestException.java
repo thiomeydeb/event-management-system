@@ -11,6 +11,10 @@ public class BadRequestException extends RuntimeException {
         this.errors = errors;
     }
 
+    public BadRequestException(String message) {
+        super(message);
+    }
+
     public List<FieldErrorDto> getErrors() {
         return errors;
     }

@@ -20,7 +20,7 @@ class CommonDbFunctions {
 
     BaseApiResponse returnJsonFromQueryWithCount(def sqlQuery, def countQuery, def sqlParams, def countParamStatus){
         Sql sql = new Sql(dataSource);
-        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [])
+        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [], 0)
         def data = sql.rows(sqlQuery, sqlParams);
         def count;
         if (countParamStatus){
@@ -28,7 +28,8 @@ class CommonDbFunctions {
         }else{
             count = sql.firstRow(countQuery).get('count');
         }
-        res.data = ['data': data, 'total': count]
+        res.data =  data
+        res.total = count
         sql.close()
         return res
     }

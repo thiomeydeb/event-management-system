@@ -33,11 +33,10 @@ class EventManagementService {
         this.commonDbFunctions = commonDbFunctions
     }
 
-    BaseApiResponse linkPlanner(def parameterMap){
+    BaseApiResponse linkPlanner(LinkPlannerDto body){
         BaseApiResponse res = new BaseApiResponse(HttpStatus.OK.value(), "success")
-        def params = MyUtil.flattenListParam(parameterMap)
-        def userId = params.userId?.toLong()
-        def eventId = params.eventId?.toLong()
+        def userId = body.userId
+        def eventId = body.eventId
         def sqlParams = [userId: userId, eventId: eventId];
         Sql sql = new Sql(dataSource)
         def duplicateRecords = sql.firstRow("SELECT* FROM event_planner_allocation WHERE event_id = ?.eventId AND user_id = ?.userId AND status = TRUE", sqlParams);

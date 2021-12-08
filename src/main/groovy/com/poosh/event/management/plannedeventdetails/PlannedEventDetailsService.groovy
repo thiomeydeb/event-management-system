@@ -4,6 +4,8 @@ import com.poosh.event.management.apiresponse.BaseApiResponse
 import com.poosh.event.management.audit.AuditService
 import com.poosh.event.management.eventype.EventType
 import com.poosh.event.management.eventype.EventTypeRepository
+import com.poosh.event.management.exceptions.BadRequestException
+import com.poosh.event.management.globaldto.StatusDto
 import com.poosh.event.management.utils.CommonDbFunctions
 import com.poosh.event.management.utils.MyUtil
 import groovy.json.JsonSlurper
@@ -366,10 +368,10 @@ class PlannedEventDetailsService {
             }
             def overallPlanningStatus = providerStatus.contains(false);
             if(overallPlanningStatus){
-                sql.executeUpdate("UPDATE booked_events SET status = 2 WHERE id = ?", eventId);
+                sql.executeUpdate("UPDATE booked_event SET status = 2 WHERE id = ?", eventId);
                 eventStatus = 2;
             }else{
-                sql.executeUpdate("UPDATE booked_events SET status = 3, completion_timestamp = now() WHERE id = ?", eventId);
+                sql.executeUpdate("UPDATE booked_event SET status = 3, completion_timestamp = now() WHERE id = ?", eventId);
                 eventStatus = 3;
             }
         }
@@ -391,6 +393,44 @@ class PlannedEventDetailsService {
         HashMap<String, String> eventDetails= new HashMap<String, String>();
         eventDetails.put("eventStatus", ""+eventStatus);
         res.data = eventDetails
+        return res
+    }
+
+    BaseApiResponse updatePlannedDetailStatus(Long plannedDetailsId,
+                                              StatusDto body,
+                                              HttpServletRequest request,
+                                              WebRequest webRequest,
+                                              Principal principal){
+        //initialize response object
+        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "update successful", [])
+
+        //fetch event type by id from db using Planned Event Details Repository
+        def optionalPlannedEventDetail = plannedEventDetailsRepository.findById(plannedDetailsId)
+
+        /*
+         *check if a record was returned.
+         *if a record is not present throw an exception
+         *if a record is present, update the status
+        */
+        if (optionalPlannedEventDetail.isPresent()) {
+            //retrieve event type from optionalEventType
+            def plannedEventDetail = optionalPlannedEventDetail.get()
+
+            //set new status
+            plannedEventDetail.setStatus(body.status)
+
+            //perform update by saving using plannedEventDetailsRepository
+            def updatedPlannedEventDetail = plannedEventDetailsRepository.save(plannedEventDetail)
+
+            //assign updated planned event  details to response data field
+            res.data = updatedPlannedEventDetail
+        } else {
+            //throw
+            throw new BadRequestException(String.format("record with id %s not found", plannedDetailsId), [])
+        }
+        //String userName = principal.getName()
+        String userName = "muriithi91@gmail.com"
+        auditService.logAuditEvent("Update Provider Status-(Planning)",request.getRemoteAddr(), userName, "Planned Details Id:"+plannedDetailsId);
         return res
     }
 }

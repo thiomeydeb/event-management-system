@@ -9,6 +9,9 @@ import Paper from '@mui/material/Paper';
 import BasicEventDetails from './BasicEventDetails';
 import ProgressDetails from './ProgressDetails';
 import ProviderDetails from './ProviderDetails';
+import ManageProviders from './ManageProviders';
+import AssignPlanner from './AssignPlanner';
+import EventGreening from './EventGreening';
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -50,7 +53,14 @@ function a11yProps(index) {
   };
 }
 
-export default function EventProgress({ eventData, setViewMode }) {
+export default function EventProgress({
+  eventData,
+  setViewMode,
+  userType,
+  updateProviderStatus,
+  onLinkPlanner,
+  setAlertOptions
+}) {
   let statusColor = 'error';
   let statusMessage = 'undefined';
   let greeningStatusColor = 'error';
@@ -72,19 +82,19 @@ export default function EventProgress({ eventData, setViewMode }) {
     statusMessage = 'Cancelled';
   }
 
-  if (eventData.status === 0) {
+  if (eventData.greeningStatus === 0) {
     greeningStatusColor = 'warning';
     greeningStatusMessage = 'Pending';
-  } else if (eventData.status === 1) {
+  } else if (eventData.greeningStatus === 1) {
     greeningStatusColor = 'info';
-    greeningStatusMessage = 'Planner Assigned';
-  } else if (eventData.status === 2) {
+    greeningStatusMessage = 'Setting up';
+  } else if (eventData.greeningStatus === 2) {
     greeningStatusColor = 'primary';
     greeningStatusMessage = 'In progress';
-  } else if (eventData.status === 3) {
+  } else if (eventData.greeningStatus === 3) {
     greeningStatusColor = 'success';
     greeningStatusMessage = 'Complete';
-  } else if (eventData.status === 4) {
+  } else if (eventData.greeningStatus === 4) {
     greeningStatusColor = 'error';
     statusMessage = 'Cancelled';
   }
@@ -100,6 +110,11 @@ export default function EventProgress({ eventData, setViewMode }) {
           <Tab label="Event Details" {...a11yProps(0)} />
           <Tab label="Provider Details" {...a11yProps(1)} />
           <Tab label="Progress Details" {...a11yProps(2)} />
+          {(userType === 'planner' || userType === 'manager') && (
+            <Tab label="Manage Selected Providers" {...a11yProps(3)} />
+          )}
+          {userType === 'manager' && <Tab label="Assign Planner" {...a11yProps(4)} />}
+          {userType === 'manager' && <Tab label="Event Greening" {...a11yProps(5)} />}
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -117,6 +132,25 @@ export default function EventProgress({ eventData, setViewMode }) {
       <TabPanel value={value} index={2}>
         <ProgressDetails eventData={eventData} />
       </TabPanel>
+      {(userType === 'planner' || userType === 'manager') && (
+        <TabPanel value={value} index={3}>
+          <ManageProviders eventData={eventData} onUpdateProviderStatus={updateProviderStatus} />
+        </TabPanel>
+      )}
+      {userType === 'manager' && (
+        <div>
+          <TabPanel value={value} index={4}>
+            <AssignPlanner
+              onLinkPlanner={onLinkPlanner}
+              setAlertOptions={setAlertOptions}
+              eventData={eventData}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={5}>
+            <EventGreening />
+          </TabPanel>
+        </div>
+      )}
     </Box>
   );
 }

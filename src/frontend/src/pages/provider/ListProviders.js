@@ -9,12 +9,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import MinusFill from '@iconify/icons-eva/minus-fill';
-import PlusFill from '@iconify/icons-eva/plus-fill';
 import { sentenceCase } from 'change-case';
 import Label from '../../components/Label';
+import ProviderMoreMenu from './menu/ProviderMoreMenu';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMoreIcon';
 
 function createData(name, status) {
@@ -37,64 +35,42 @@ function createData(name, status) {
 }
 
 function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
-
+  const { row, url, setViewMode, updateProviderStatus, onEditClick } = props;
   return (
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          {/* <ExpandMore
+        {/* <TableCell>
+           <ExpandMore
             expand={expanded}
             onClick={handleExpandClick}
             aria-expanded={expanded}
             aria-label="show more"
           >
             <ExpandMoreIcon />
-          </ExpandMore> */}
+          </ExpandMore>
+        </TableCell> */}
+        <TableCell component="th" scope="row">
+          {row.title}
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.providerCategory ? row.providerCategory.name : ''}
         </TableCell>
-        <TableCell>
-          <Label variant="ghost" color={(row.status === 'in-active' && 'error') || 'success'}>
-            {sentenceCase(row.status)}
+        <TableCell component="th" scope="row">
+          {row.cost}
+        </TableCell>
+        <TableCell align="left">
+          <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
+            {sentenceCase(row.active ? 'active' : 'inactive')}
           </Label>
         </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Details
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.details.map((detailsRow) => (
-                    <TableRow key={detailsRow.date}>
-                      <TableCell component="th" scope="row">
-                        {detailsRow.date}
-                      </TableCell>
-                      <TableCell>{detailsRow.customerId}</TableCell>
-                      <TableCell align="right">{detailsRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(detailsRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
+        <TableCell align="right">
+          <ProviderMoreMenu
+            row={row}
+            updateProviderStatus={updateProviderStatus}
+            setViewMode={setViewMode}
+            url={url}
+            onEditClick={onEditClick}
+          />
         </TableCell>
       </TableRow>
     </>
@@ -119,28 +95,34 @@ Row.propTypes = {
   }).isRequired
 };
 
-const rows = [
-  createData('Savannah Caterings', 'in-active'),
-  createData('Homeboys', 'active'),
-  createData('Laugh Industry', 'in-active'),
-  createData('KK Security', 'active'),
-  createData('Villa Foods', 'active')
-];
-
-export default function ListProvidersTable() {
+export default function ListProvidersTable({
+  providers,
+  updateProviderStatus,
+  setViewMode,
+  url,
+  onEditClick
+}) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="Providers">
         <TableHead>
           <TableRow>
-            <TableCell />
-            <TableCell>Name</TableCell>
+            <TableCell>Title</TableCell>
+            <TableCell>Category</TableCell>
+            <TableCell>Cost</TableCell>
             <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
+          {providers.map((row) => (
+            <Row
+              key={row.id}
+              row={row}
+              url={url}
+              updateProviderStatus={updateProviderStatus}
+              setViewMode={setViewMode}
+              onEditClick={onEditClick}
+            />
           ))}
         </TableBody>
       </Table>

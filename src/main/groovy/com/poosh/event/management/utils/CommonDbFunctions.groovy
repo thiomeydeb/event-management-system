@@ -3,22 +3,24 @@ package com.poosh.event.management.utils;
 import com.poosh.event.management.apiresponse.BaseApiResponse;
 import groovy.sql.Sql;
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
+import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
-public class CommonDbFunctions {
-
-    private static DataSource dataSource;
+@Component
+class CommonDbFunctions {
+    private final DataSource dataSource
 
     @Autowired
-    CommonDbFunctions ( DataSource dataSource){
-        this.dataSource = dataSource;
+    CommonDbFunctions(DataSource dataSource) {
+        this.dataSource = dataSource
     }
 
-    static BaseApiResponse returnJsonFromQueryWithCount(def sqlQuery, def countQuery, def sqlParams, def countParamStatus){
+    BaseApiResponse returnJsonFromQueryWithCount(def sqlQuery, def countQuery, def sqlParams, def countParamStatus){
         Sql sql = new Sql(dataSource);
-        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [])
+        BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [], 0)
         def data = sql.rows(sqlQuery, sqlParams);
         def count;
         if (countParamStatus){
@@ -26,12 +28,13 @@ public class CommonDbFunctions {
         }else{
             count = sql.firstRow(countQuery).get('count');
         }
-        res.data = ['data': data, 'total': count]
+        res.data =  data
+        res.total = count
         sql.close()
         return res
     }
 
-    static BaseApiResponse returnJsonFirstRow(def sqlQuery, def sqlParams){
+    BaseApiResponse returnJsonFirstRow(def sqlQuery, def sqlParams){
         Sql sql = new Sql(dataSource);
         BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [])
         def data = sql.firstRow(sqlQuery, sqlParams);
@@ -40,7 +43,7 @@ public class CommonDbFunctions {
         return res
     }
 
-    static BaseApiResponse returnJsonRows(def sqlQuery, def sqlParams){
+    BaseApiResponse returnJsonRows(def sqlQuery, def sqlParams){
         Sql sql = new Sql(dataSource);
         BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [])
         def data = sql.rows(sqlQuery, sqlParams);
@@ -49,7 +52,7 @@ public class CommonDbFunctions {
         return res
     }
 
-    static BaseApiResponse returnJsonRowsWithoutParams(def sqlQuery){
+    BaseApiResponse returnJsonRowsWithoutParams(def sqlQuery){
         Sql sql = new Sql(dataSource);
         BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "", [])
         def data = sql.rows(sqlQuery);
@@ -58,7 +61,7 @@ public class CommonDbFunctions {
         return res
     }
 
-    public static long getUserIdFromEmail(String email){
+    Long getUserIdFromEmail(String email){
         Sql sql = new Sql(dataSource);
         def emailParam = [email: email];
         long userId = sql.firstRow("SELECT id FROM users WHERE email = ?.email", emailParam).get('id');

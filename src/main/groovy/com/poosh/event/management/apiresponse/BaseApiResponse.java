@@ -8,6 +8,7 @@ public class BaseApiResponse {
     protected int status;
     protected String message;
     protected List<FieldErrorDto> errors = new ArrayList<>();
+    protected int total;
 
     public BaseApiResponse() {
 
@@ -29,6 +30,14 @@ public class BaseApiResponse {
         this.data = data;
         this.status = status;
         this.message = message;
+    }
+
+    public BaseApiResponse(Object data, int status, String message, List<FieldErrorDto> errors, int total) {
+        this.data = data;
+        this.status = status;
+        this.message = message;
+        this.errors = errors;
+        this.total = total;
     }
 
     public Object getData() {
@@ -61,5 +70,9 @@ public class BaseApiResponse {
 
     public void setErrors(List<FieldErrorDto> errors) {
         this.errors = errors;
+    }
+
+    public int getTotal() {
+        return total;
     }
 }

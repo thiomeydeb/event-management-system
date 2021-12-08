@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 @RestController
-@RequestMapping("audit")
+@RequestMapping("api/v1/audit")
 public class AuditController {
     private final AuditService auditService;
 
@@ -25,5 +25,10 @@ public class AuditController {
     @GetMapping(value = "event/logs")
     public BaseApiResponse getEventLogs(WebRequest request){
         return auditService.getEventLogs(request.getParameterMap());
+    }
+
+    @GetMapping(value = "logs")
+    public BaseApiResponse getLogs(){
+        return auditService.getLogs();
     }
 }

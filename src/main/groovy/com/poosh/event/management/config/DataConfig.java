@@ -3,6 +3,8 @@ package com.poosh.event.management.config;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -20,4 +22,10 @@ public class DataConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(12);
     }
+
+//    @Bean
+//    public JavaMailSender getJavaMailSender(){
+//        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+//        mailSender.setHost();
+//    }
 }

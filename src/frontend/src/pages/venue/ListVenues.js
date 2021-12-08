@@ -7,21 +7,16 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { sentenceCase } from 'change-case';
-import { UserMoreMenu } from '../../components/_dashboard/user';
 import Label from '../../components/Label';
+import VenueMoreMenu from './menu/VenueMoreMenu';
 
-function createData(name, location, status) {
-  return { name, location, status };
-}
-
-const rows = [
-  createData('Carnivore', 'Kenya,Nairobi,Langata', 'in-active'),
-  createData('The Hub Karen', 'Kenya,Nairobi,Langata', 'active'),
-  createData('Ngong Race cource', 'Kenya,Nairobi,Ngong', 'in-active'),
-  createData('Social House', 'Kenya,Nairobi,James Gichuru', 'active')
-];
-
-export default function ListVenuesTable() {
+export default function ListVenuesTable({
+  venues,
+  updateVenueStatus,
+  setViewMode,
+  url,
+  onEditClick
+}) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -29,23 +24,31 @@ export default function ListVenuesTable() {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Location</TableCell>
+            <TableCell>Price</TableCell>
             <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          {venues.map((row) => (
+            <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
               <TableCell>{row.location}</TableCell>
-              <TableCell>
-                <Label variant="ghost" color={(row.status === 'in-active' && 'error') || 'success'}>
-                  {sentenceCase(row.status)}
+              <TableCell>{row.amount}</TableCell>
+              <TableCell align="left">
+                <Label variant="ghost" color={(!row.active && 'error') || 'success'}>
+                  {sentenceCase(row.active ? 'active' : 'inactive')}
                 </Label>
               </TableCell>
               <TableCell align="right">
-                <UserMoreMenu />
+                <VenueMoreMenu
+                  row={row}
+                  updateVenueStatus={updateVenueStatus}
+                  setViewMode={setViewMode}
+                  url={url}
+                  onEditClick={onEditClick}
+                />
               </TableCell>
             </TableRow>
           ))}

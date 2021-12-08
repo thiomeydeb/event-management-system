@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -19,8 +20,8 @@ public class EventManagementController {
     }
 
     @PostMapping(value = "/link")
-    public BaseApiResponse linkPlanner(WebRequest request){
-        return eventManagementService.linkPlanner(request.getParameterMap());
+    public BaseApiResponse linkPlanner(@RequestBody @Valid LinkPlannerDto body){
+        return eventManagementService.linkPlanner(body);
     }
 
     @PostMapping(value = "/cancelevent")
@@ -41,4 +42,6 @@ public class EventManagementController {
                                                  Principal principal){
         return eventManagementService.saveGreeningDetails(body, request, webRequest, principal);
     }
+
+
 }

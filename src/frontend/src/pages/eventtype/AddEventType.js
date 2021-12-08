@@ -1,30 +1,46 @@
-import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 // material
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { addEventTypeSchema } from './validation/event-type';
+import { basicAuthBase64Header } from '../../constants/defaultValues';
 
-export default function AddEventTypeForm({ setViewMode }) {
+export default function AddEventTypeForm({ setViewMode, setAlertOptions, url, getEventTypes }) {
   const navigate = useNavigate();
-
-  const addEventTypeSchema = Yup.object().shape({
-    eventTypeName: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Event type name required')
-  });
-
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: ''
+      name: ''
     },
     validationSchema: addEventTypeSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (values, formikActions) => {
+      axios(url, {
+        method: 'POST',
+        data: values,
+        headers: {
+          authorization: basicAuthBase64Header
+        }
+      })
+        .then((res) => {
+          formikActions.resetForm();
+          formikActions.setSubmitting(false);
+          setAlertOptions({
+            open: true,
+            message: 'Event type added',
+            severity: 'success'
+          });
+          getEventTypes();
+          setViewMode('list');
+        })
+        .catch((error) => {
+          setAlertOptions({
+            open: true,
+            message: 'failed to add event type',
+            severity: 'error'
+          });
+          console.log(error);
+        });
     }
   });
 
@@ -32,15 +48,15 @@ export default function AddEventTypeForm({ setViewMode }) {
 
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('add')}>
+      <Form autoComplete="off" noValidate>
         <Stack spacing={3}>
           <TextField
             fullWidth
             label="Event type name"
             margin="dense"
-            {...getFieldProps('eventTypeName')}
-            error={Boolean(touched.eventTypeName && errors.eventTypeName)}
-            helperText={touched.eventTypeName && errors.eventTypeName}
+            {...getFieldProps('name')}
+            error={Boolean(touched.name && errors.name)}
+            helperText={touched.name && errors.name}
           />
           <LoadingButton
             fullWidth

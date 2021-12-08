@@ -7,4 +7,8 @@ class ProviderCategoryCreateDto {
     @NotBlank
     @Size(min = 3, max = 20)
     String name
+
+    @NotBlank
+    @Size(min = 1, max = 20)
+    String code
 }

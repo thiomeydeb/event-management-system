@@ -17,12 +17,11 @@ public class EventPlannerAllocation {
             strategy = GenerationType.SEQUENCE,
             generator = "event_planner_allocation_sequence"
     )
-
     @Id
     @Column(
             name = "id",
-            nullable = false,
-            updatable = false
+            updatable = false,
+            columnDefinition = "BIGSERIAL"
     )
     private Integer id;
 
@@ -43,14 +42,14 @@ public class EventPlannerAllocation {
     @Column(
             name = "status",
             nullable = false,
-            columnDefinition = "BOOLEAN"
+            columnDefinition = "BOOLEAN DEFAULT TRUE"
     )
     private Boolean status;
 
     @Column(
             name ="time_allocation",
             nullable = false,
-            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE"
+            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"
     )
     private LocalDate time_allocated;
 

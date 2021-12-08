@@ -20,7 +20,7 @@ public class User {
             name = "id",
             updatable = false
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "first_name",
@@ -118,11 +118,11 @@ public class User {
         this.companyName = companyName;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

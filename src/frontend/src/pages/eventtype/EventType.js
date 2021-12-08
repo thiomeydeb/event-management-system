@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Typography, Button, Container, Card } from '@mui/material';
+import { Stack, Typography, Button, Container, Card, Snackbar, Alert } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { Link as RouterLink } from 'react-router-dom';
 import plusFill from '@iconify/icons-eva/plus-fill';
@@ -10,27 +10,79 @@ import Scrollbar from '../../components/Scrollbar';
 import AddEventType from './AddEventType';
 import ListEventType from './ListEventType';
 import EditEventType from './EditEventType';
+import { apiBasePath, basicAuthBase64Header } from '../../constants/defaultValues';
+import Notification from '../../components/custom/Notification';
 
-const eventTypeUrl = 'http://localhost:8080/api/v1/event-type';
+const eventTypeUrl = apiBasePath.concat('event-type');
 
 export default function EventType() {
   const [viewMode, setViewMode] = useState('list');
-  const [eventTypes, setEventTypes] = useState();
-  const getEventTypes = () => {
+  const [alertOptions, setAlertOptions] = useState({
+    open: false,
+    severity: 'success',
+    message: 'Success'
+  });
+  const [editData, setEditData] = useState({});
+  const [eventTypes, setEventTypes] = useState([{}]);
+  const handleClose = () => {};
+  const getEventTypes = (view) => {
     axios
       .get(eventTypeUrl, {
-        auth: {
-          username: 'user1',
-          password: 'user1Pass'
+        headers: {
+          authorization: basicAuthBase64Header
         }
       })
       .then((res) => {
-        console.log(res);
+        setEventTypes(res.data.data);
+        if (view === 'list') {
+          setAlertOptions({
+            open: true,
+            severity: 'success',
+            message: 'Values fetched successfully'
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error.toJSON);
+        setAlertOptions({
+          open: true,
+          severity: 'error',
+          message: 'failed to fetch data'
+        });
       });
   };
   useEffect(() => {
-    getEventTypes();
+    getEventTypes('list');
   }, []);
+  const updateEventTypeStatus = (url, values) => {
+    axios(url, {
+      method: 'PUT',
+      headers: {
+        authorization: basicAuthBase64Header
+      },
+      data: values
+    })
+      .then((res) => {
+        getEventTypes();
+        setAlertOptions({
+          open: true,
+          message: 'status update successful',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        console.log(error.toJSON);
+        setAlertOptions({
+          open: true,
+          message: 'status update failed',
+          severity: 'error'
+        });
+      });
+  };
+  const onEditClick = (eventTypeData) => {
+    setEditData(eventTypeData);
+    setViewMode('edit');
+  };
   return (
     <Page title="Event Type | POSH Events">
       <Container>
@@ -63,12 +115,40 @@ export default function EventType() {
         <Card>
           <Scrollbar>
             {/* Display component based on view mode state */}
-            {/* {viewMode ? <ListEventType /> : <AddEventType setViewMode={setViewMode} />} */}
-            {viewMode === 'list' && <ListEventType />}
-            {viewMode === 'add' && <AddEventType />}
-            {viewMode === 'edit' && <EditEventType setViewMode={setViewMode} />}
+            {viewMode === 'list' && (
+              <ListEventType
+                eventTypes={eventTypes}
+                updateEventTypeStatus={updateEventTypeStatus}
+                setViewMode={setViewMode}
+                url={eventTypeUrl}
+                onEditClick={onEditClick}
+              />
+            )}
+            {viewMode === 'add' && (
+              <AddEventType
+                setViewMode={setViewMode}
+                setAlertOptions={setAlertOptions}
+                url={eventTypeUrl}
+                getEventTypes={getEventTypes}
+              />
+            )}
+            {viewMode === 'edit' && (
+              <EditEventType
+                setViewMode={setViewMode}
+                setAlertOptions={setAlertOptions}
+                url={eventTypeUrl}
+                getEventTypes={getEventTypes}
+                updateData={editData}
+              />
+            )}
           </Scrollbar>
         </Card>
+        <Notification
+          open={alertOptions.open}
+          handleCLose={handleClose}
+          severity={alertOptions.severity}
+          message={alertOptions.message}
+        />
       </Container>
     </Page>
   );

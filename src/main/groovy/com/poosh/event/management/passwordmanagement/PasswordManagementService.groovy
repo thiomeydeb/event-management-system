@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.context.request.WebRequest
 
 import javax.servlet.http.HttpServletRequest
+import java.time.LocalDate
 
 @Service
 class PasswordManagementService {
@@ -43,7 +44,7 @@ class PasswordManagementService {
 
     boolean insertPasswordToken(Long userId, String token) {
         def res = false;
-        PasswordResetToken passwordResetToken = new PasswordResetToken(userId, token)
+        PasswordResetToken passwordResetToken = new PasswordResetToken(token, userId, LocalDate.now(), true)
         def savedToken = passwordResetTokenRepository.save(passwordResetToken)
         if (savedToken) {
             res = true;

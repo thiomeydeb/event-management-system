@@ -15,18 +15,22 @@ import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("api/v1/user")
 @Validated
 public class UserController {
 
     private final UserService userService;
     private final PasswordManagementService passwordManagementService;
+    private final CommonDbFunctions commonDbFunctions;
 
 
     @Autowired
-    public UserController(UserService userService, PasswordManagementService passwordManagementService) {
+    public UserController(UserService userService,
+                          PasswordManagementService passwordManagementService,
+                          CommonDbFunctions commonDbFunctions) {
         this.userService = userService;
         this.passwordManagementService = passwordManagementService;
+        this.commonDbFunctions = commonDbFunctions;
     }
 
     @GetMapping(value = "")
@@ -39,7 +43,7 @@ public class UserController {
         return userService.getUsersBasedOnRole(request.getParameterMap(), roleId);
     }
 
-    @PostMapping(value = "/")
+    @PostMapping(value = "")
     public BaseApiResponse addUser(@RequestBody @Valid UserCreateDto user){
         return userService.addUser(user,1);
     }
@@ -66,7 +70,7 @@ public class UserController {
     @PostMapping(value ="/promote")
     public BaseApiResponse promoteToAdmin(WebRequest request, Principal principal){
         String currentUser  = principal.getName();
-        long loggedInUserId = CommonDbFunctions.getUserIdFromEmail(currentUser);
+        long loggedInUserId = commonDbFunctions.getUserIdFromEmail(currentUser);
 
         int userId = Integer.parseInt(request.getParameter("userId"));
         return userService.promoteToAdmin(userId,loggedInUserId);
@@ -75,7 +79,7 @@ public class UserController {
     @PostMapping(value ="/demote")
     public BaseApiResponse demoteFromAdmin(WebRequest request, Principal principal){
         String currentUser  = principal.getName();
-        long loggedInUserId = CommonDbFunctions.getUserIdFromEmail(currentUser);
+        long loggedInUserId = commonDbFunctions.getUserIdFromEmail(currentUser);
 
         int userId = Integer.parseInt(request.getParameter("userId"));
         return userService.demoteFromAdmin(userId,loggedInUserId);
@@ -89,7 +93,7 @@ public class UserController {
     @PostMapping(value ="/assignrole")
     public BaseApiResponse assignRole(WebRequest request, Principal principal){
         String currentUser  = principal.getName();
-        long loggedInUserId = CommonDbFunctions.getUserIdFromEmail(currentUser);
+        long loggedInUserId = commonDbFunctions.getUserIdFromEmail(currentUser);
         long userId = Long.parseLong(request.getParameter("userId"));
         long roleId = Long.parseLong(request.getParameter("roleId"));
         return userService.assignRole(userId,roleId,loggedInUserId);
@@ -98,7 +102,7 @@ public class UserController {
     @PostMapping(value ="/deallocaterole")
     public BaseApiResponse deallocateRole(WebRequest request, Principal principal){
         String currentUser  = principal.getName();
-        long loggedInUserId = CommonDbFunctions.getUserIdFromEmail(currentUser);
+        long loggedInUserId = commonDbFunctions.getUserIdFromEmail(currentUser);
         long userId = Long.parseLong(request.getParameter("userId"));
         long roleId = Long.parseLong(request.getParameter("roleId"));
         return userService.deallocateRole(userId,roleId,loggedInUserId);
@@ -117,7 +121,7 @@ public class UserController {
     @PostMapping(value = "/updateprofile")
     public BaseApiResponse updateProfile(@RequestBody String body, Principal principal){
         String userName = principal.getName();
-        long userId = CommonDbFunctions.getUserIdFromEmail(userName);
+        long userId = commonDbFunctions.getUserIdFromEmail(userName);
         return userService.updateProfile(userId, body);
 
     }

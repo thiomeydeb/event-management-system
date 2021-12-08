@@ -1,30 +1,57 @@
-import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 import { useNavigate } from 'react-router-dom';
 // material
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import axios from 'axios';
+import { addProviderCategorySchema } from './validation/provider-category';
+import { basicAuthBase64Header } from '../../constants/defaultValues';
 
-export default function EditProviderCategoryForm({ setViewMode }) {
-  const navigate = useNavigate();
-
-  const editProviderCategorySchema = Yup.object().shape({
-    eventTypeName: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Add Provider Category name required')
-  });
+export default function EditProviderCategoryForm({
+  setViewMode,
+  setAlertOptions,
+  url,
+  getProviderCategories,
+  updateData
+}) {
+  const data = updateData === undefined ? {} : updateData;
+  const updateUrl = url.concat('/').concat(data.id);
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: ''
+      name: data.name,
+      code: data.code
     },
-    validationSchema: editProviderCategorySchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    validationSchema: addProviderCategorySchema,
+    onSubmit: (values, formikActions) => {
+      console.log(values);
+      axios(updateUrl, {
+        method: 'PUT',
+        data: values,
+        headers: {
+          authorization: basicAuthBase64Header
+        }
+      })
+        .then((res) => {
+          formikActions.resetForm();
+          formikActions.setSubmitting(false);
+          setAlertOptions({
+            open: true,
+            message: 'update successful',
+            severity: 'success'
+          });
+          getProviderCategories();
+          setViewMode('list');
+        })
+        .catch((error) => {
+          setAlertOptions({
+            open: true,
+            message: 'failed to update provider category',
+            severity: 'error'
+          });
+          formikActions.setSubmitting(false);
+          console.log(error);
+        });
     }
   });
 
@@ -32,15 +59,23 @@ export default function EditProviderCategoryForm({ setViewMode }) {
 
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={() => setViewMode('list')}>
+      <Form autoComplete="off" noValidate>
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Provider Category"
+            label="Event Category Name"
             margin="dense"
-            {...getFieldProps('providerCategoryName')}
-            error={Boolean(touched.providerCategoryName && errors.providerCategoryName)}
-            helperText={touched.providerCategoryName && errors.providerCategoryName}
+            {...getFieldProps('name')}
+            error={Boolean(touched.name && errors.name)}
+            helperText={touched.name && errors.name}
+          />
+          <TextField
+            fullWidth
+            label="Event Category Code"
+            margin="dense"
+            {...getFieldProps('code')}
+            error={Boolean(touched.code && errors.code)}
+            helperText={touched.code && errors.code}
           />
           <LoadingButton
             fullWidth

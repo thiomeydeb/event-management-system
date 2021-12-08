@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
 class VenueCreateDto {
-    @NotBlank
+    @NotBlank()
     @Size(min = 3, max = 20)
     String name
 

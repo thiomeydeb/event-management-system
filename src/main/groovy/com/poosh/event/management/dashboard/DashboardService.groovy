@@ -13,9 +13,11 @@ import java.security.Principal
 class DashboardService {
 
     private final DataSource dataSource
+    private final CommonDbFunctions commonDbFunctions
 
-    DashboardService(DataSource dataSource) {
+    DashboardService(DataSource dataSource, CommonDbFunctions commonDbFunctions) {
         this.dataSource = dataSource
+        this.commonDbFunctions = commonDbFunctions
     }
 
     //Admin Methods
@@ -94,21 +96,21 @@ class DashboardService {
         def query = """SELECT name, COALESCE((SELECT SUM(booked_events.management_amount) 
                        FROM booked_events WHERE booked_events.status = 3 AND booked_events.event_type_id = event_type.id ),0) AS amount 
                        FROM event_type""";
-        return  CommonDbFunctions.returnJsonRowsWithoutParams(query);
+        return  commonDbFunctions.returnJsonRowsWithoutParams(query);
     }
 
     BaseApiResponse totalEventCountPerEventType (){
         def query = """SELECT name, COALESCE((SELECT count(1) FROM booked_events WHERE booked_events.status = 3 AND 
                        booked_events.event_type_id = event_type.id ),0) AS count 
                        FROM event_type""";
-        return  CommonDbFunctions.returnJsonRowsWithoutParams(query);
+        return  commonDbFunctions.returnJsonRowsWithoutParams(query);
     }
 
     //Client Methods
     BaseApiResponse getClientDashboardData(Principal principal){
         BaseApiResponse res = new BaseApiResponse([], HttpStatus.OK.value(), "success", [])
         String email = principal.getName()
-        long clientId = CommonDbFunctions.getUserIdFromEmail(email)
+        long clientId = commonDbFunctions.getUserIdFromEmail(email)
         Map data = [:];
         Sql sql = new Sql(dataSource);
         Map sqlParam = [status:0, clientId: clientId]

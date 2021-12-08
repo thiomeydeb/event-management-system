@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
 
+    @Transactional
     @Modifying
     @Query("UPDATE User user SET user.isActive = ?2 WHERE user.id = ?1")
     int updateUserStatus(Long id, boolean status);

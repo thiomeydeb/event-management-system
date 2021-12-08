@@ -10,118 +10,94 @@ public class UserLoginLog {
             name = "user_login_log_sequence",
             sequenceName = "user_login_log_sequence",
             allocationSize = 1
-
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "user_login_log_sequence"
     )
-
     @Id
     @Column(
             name = "id",
-            nullable = false,
-            updatable = false
+            updatable = false,
+            columnDefinition = "BIGSERIAL"
     )
-    private Integer id;
-
-    @Column(
-            name = "action",
-            nullable = false,
-            columnDefinition = "VARCHAR(250)"
-    )
-    private String action;
+    private Long id;
 
     @Column(
             name = "ip_address",
             nullable = false,
             columnDefinition = "VARCHAR(250)"
     )
-    private String ip_address;
+    private String ipAddress;
 
         @Column(
-            name = "user_id",
-            nullable = false,
-            columnDefinition = "BIGINT"
+            name = "success",
+            columnDefinition = "BOOLEAN"
     )
-    private Integer user_id;
+    private Long success;
 
     @Column(
-            name ="transaction_time",
+            name ="entered_email",
             nullable = false,
-            columnDefinition = "TIMESTAMP(6) WITHOUT TIME ZONE"
+            columnDefinition = "VARCHAR(100)"
     )
-    private LocalDate transaction_time;
+    private LocalDate enteredEmail;
 
     @Column(
-            name = "reference",
+            name = "login_time",
             nullable = false,
-            columnDefinition = "VARCHAR(50)"
+            columnDefinition = "TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP"
     )
-    private String reference;
+    private String loginTime;
 
     public UserLoginLog(){
 
     }
 
-    public UserLoginLog(
-            String action,
-            String ip_address,
-            Integer user_id,
-            LocalDate transaction_time,
-            String reference) {
-        this.action = action;
-        this.ip_address = ip_address;
-        this.user_id = user_id;
-        this.transaction_time = transaction_time;
-        this.reference = reference;
+    public UserLoginLog(String ipAddress, Long success, LocalDate enteredEmail, String loginTime) {
+        this.ipAddress = ipAddress;
+        this.success = success;
+        this.enteredEmail = enteredEmail;
+        this.loginTime = loginTime;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getAction() {
-        return action;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setAction(String action) {
-        this.action = action;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
-    public String getIp_address() {
-        return ip_address;
+    public Long getSuccess() {
+        return success;
     }
 
-    public void setIp_address(String ip_address) {
-        this.ip_address = ip_address;
+    public void setSuccess(Long success) {
+        this.success = success;
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public LocalDate getEnteredEmail() {
+        return enteredEmail;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setEnteredEmail(LocalDate enteredEmail) {
+        this.enteredEmail = enteredEmail;
     }
 
-    public LocalDate getTransaction_time() {
-        return transaction_time;
+    public String getLoginTime() {
+        return loginTime;
     }
 
-    public void setTransaction_time(LocalDate transaction_time) {
-        this.transaction_time = transaction_time;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setLoginTime(String loginTime) {
+        this.loginTime = loginTime;
     }
 }

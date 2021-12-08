@@ -1,6 +1,7 @@
 package com.poosh.event.management.bookevent;
 
 import com.poosh.event.management.eventype.EventType;
+import com.poosh.event.management.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -23,10 +24,10 @@ public class BookEvent {
     @Id
     @Column(
             name = "id",
-            nullable = false,
-            updatable = false
+            updatable = false,
+            columnDefinition = "BIGSERIAL"
     )
-    private Integer id;
+    private Long id;
 
     @Column(
             name = "title",
@@ -47,7 +48,7 @@ public class BookEvent {
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "user_booked_event_fk")
     )
-    private com.poosh.event.management.user.User User;
+    private User user;
 
     @ManyToOne
     @JoinColumn(
@@ -68,7 +69,6 @@ public class BookEvent {
 
     @Column(
             name = "status",
-            nullable = false,
             columnDefinition = "INTEGER"
     )
     private Integer status;
@@ -97,16 +97,21 @@ public class BookEvent {
     @Column(
             name ="timestamp",
             nullable = false,
-            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE"
+            columnDefinition = "TIMESTAMP(6) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP"
     )
     private LocalDate timestamp;
 
     @Column(
             name ="completion_timestamp",
-            nullable = false,
             columnDefinition = "TIMESTAMP(6) WITH TIME ZONE"
     )
     private LocalDate completion_timestamp;
+
+    @Column(
+            name = "greening_status",
+            columnDefinition = "INTEGER DEFAULT 0"
+    )
+    private Integer greeningStatus;
 
     public BookEvent(){
     }
@@ -131,11 +136,11 @@ public class BookEvent {
         this.completion_timestamp = completion_timestamp;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -211,11 +216,19 @@ public class BookEvent {
         this.eventType = eventType;
     }
 
-    public com.poosh.event.management.user.User getUser() {
-        return User;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser(com.poosh.event.management.user.User user) {
-        User = user;
+    public void setUser(User user) {
+        user = user;
+    }
+
+    public Integer getGreeningStatus() {
+        return greeningStatus;
+    }
+
+    public void setGreeningStatus(Integer greeningStatus) {
+        this.greeningStatus = greeningStatus;
     }
 }

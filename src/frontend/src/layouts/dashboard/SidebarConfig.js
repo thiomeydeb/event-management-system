@@ -6,11 +6,13 @@ import lockFill from '@iconify/icons-eva/lock-fill';
 import personAddFill from '@iconify/icons-eva/person-add-fill';
 import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill';
 import clipboardFill from '@iconify/icons-eva/clipboard-fill';
+import settingsFill from '@iconify/icons-eva/settings-2-fill';
 import ArchiveFill from '@iconify/icons-eva/archive-fill';
 import calendarFill from '@iconify/icons-eva/calendar-fill';
 import SettingsFill from '@iconify/icons-eva/settings-fill';
 import arrowDownFill from '@iconify/icons-eva/arrow-down-fill';
 import arrowUpFill from '@iconify/icons-eva/arrow-up-fill';
+import bookOpenFill from '@iconify/icons-eva/book-open-fill';
 
 // ----------------------------------------------------------------------
 
@@ -57,9 +59,19 @@ const sidebarConfig = [
     icon: getIcon(clipboardFill)
   },
   {
+    title: 'Manage Event',
+    path: '/dashboard/manageevent',
+    icon: getIcon(settingsFill)
+  },
+  {
     title: 'user',
     path: '/dashboard/user',
     icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Logs',
+    path: '/dashboard/logs',
+    icon: getIcon(bookOpenFill)
   },
   {
     title: 'login',

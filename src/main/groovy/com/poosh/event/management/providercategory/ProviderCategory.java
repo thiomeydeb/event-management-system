@@ -23,7 +23,6 @@ public class ProviderCategory {
     @Id
     @Column(
             name = "id",
-            nullable = false,
             updatable = false
     )
     private Long id;
@@ -34,6 +33,13 @@ public class ProviderCategory {
             columnDefinition = "VARCHAR(50)"
     )
     private String name;
+
+    @Column(
+            name = "code",
+            nullable = false,
+            columnDefinition = "VARCHAR(20) DEFAULT 'code'"
+    )
+    private String code;
 
     @Column(
             name = "is_active",
@@ -71,6 +77,14 @@ public class ProviderCategory {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Boolean getActive() {

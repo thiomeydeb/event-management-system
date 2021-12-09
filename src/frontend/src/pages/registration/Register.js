@@ -1,14 +1,16 @@
+import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
 import { Box, Card, Link, Container, Typography } from '@mui/material';
 // layouts
-import AuthLayout from '../layouts/AuthLayout';
+import AuthLayout from '../../layouts/AuthLayout';
 // components
-import Page from '../components/Page';
-import { MHidden } from '../components/@material-extend';
-import { RegisterForm } from '../components/authentication/register';
-import AuthSocial from '../components/authentication/AuthSocial';
+import Page from '../../components/Page';
+import { MHidden } from '../../components/@material-extend';
+import { RegisterForm } from '../../components/authentication/register';
+import AuthSocial from '../../components/authentication/AuthSocial';
+import Notification from '../../components/custom/Notification';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +42,11 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
+  const [alertOptions, setAlertOptions] = useState({
+    open: false,
+    severity: 'success',
+    message: 'Success'
+  });
   return (
     <RootStyle title="Register | Minimal-UI">
       <AuthLayout>
@@ -71,7 +78,7 @@ export default function Register() {
 
           <AuthSocial />
 
-          <RegisterForm />
+          <RegisterForm setAlertOptions={setAlertOptions} />
 
           <Typography variant="body2" align="center" sx={{ color: 'text.secondary', mt: 3 }}>
             By registering, I agree to Posh Events&nbsp;
@@ -94,6 +101,11 @@ export default function Register() {
             </Typography>
           </MHidden>
         </ContentStyle>
+        <Notification
+          open={alertOptions.open}
+          severity={alertOptions.severity}
+          message={alertOptions.message}
+        />
       </Container>
     </RootStyle>
   );

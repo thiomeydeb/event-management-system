@@ -10,7 +10,7 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 import { MHidden } from '../../components/@material-extend';
 //
-import sidebarConfig from './SidebarConfig';
+import sidebarConfig, { adminConfig, clientConfig, plannerConfig } from './SidebarConfig';
 import account from '../../_mocks_/account';
 
 // ----------------------------------------------------------------------
@@ -41,7 +41,15 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
-
+  let navConfig = [];
+  const role = localStorage.getItem('role');
+  if (role === 'admin') {
+    navConfig = adminConfig;
+  } else if (role === 'planner') {
+    navConfig = plannerConfig;
+  } else if (role === 'client') {
+    navConfig = clientConfig;
+  }
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
@@ -78,7 +86,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box>
 
-      <NavSection navConfig={sidebarConfig} />
+      <NavSection navConfig={navConfig} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

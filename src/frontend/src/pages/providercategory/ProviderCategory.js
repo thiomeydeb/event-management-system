@@ -90,11 +90,11 @@ export default function ProviderCategory() {
     setViewMode('edit');
   };
   return (
-    <Page title="Event Category | POSH Events">
+    <Page title="Provider Category | POSH Events">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Event Category' : 'Add Event Category'}
+            {viewMode ? 'Provider Category' : 'Add Provider Category'}
           </Typography>
           <Button
             variant="contained"
@@ -105,7 +105,7 @@ export default function ProviderCategory() {
             startIcon={<Icon icon={editFill} />}
             onClick={() => setViewMode('edit')}
           >
-            Edit Event Category
+            Edit Provider Category
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Button
@@ -115,7 +115,7 @@ export default function ProviderCategory() {
             startIcon={<Icon icon={plusFill} />}
             onClick={() => setViewMode('add')}
           >
-            New Event Category
+            New Provider Category
           </Button>
         </Stack>
         <Card>

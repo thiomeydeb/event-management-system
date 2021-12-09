@@ -13,45 +13,53 @@ import SettingsFill from '@iconify/icons-eva/settings-fill';
 import arrowDownFill from '@iconify/icons-eva/arrow-down-fill';
 import arrowUpFill from '@iconify/icons-eva/arrow-up-fill';
 import bookOpenFill from '@iconify/icons-eva/book-open-fill';
+import calendarOutline from '@iconify/icons-eva/calendar-outline';
 
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Icon icon={name} width={25} height={25} />;
 
-const sidebarConfig = [
+export const plannerConfig = [
+  {
+    title: 'Plan Event',
+    path: '/dashboard/planevent',
+    icon: getIcon(clipboardFill)
+  }
+];
+
+export const clientConfig = [
+  {
+    title: 'Event (Book)',
+    path: '/dashboard/event',
+    icon: getIcon(calendarOutline)
+  }
+];
+
+export const adminConfig = [
   {
     title: 'dashboard',
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'Event Setup',
-    path: '/dashboard/eventsetup',
-    icon: getIcon(SettingsFill),
-    iconClosed: getIcon(arrowDownFill),
-    iconOpened: getIcon(arrowUpFill),
-    subNav: [
-      {
-        title: 'eventtype',
-        path: '/dashboard/eventsetup/eventtype',
-        icon: getIcon(fileTextFill)
-      },
-      {
-        title: 'providercategory',
-        path: '/dashboard/eventsetup/providercategory',
-        icon: getIcon(ArchiveFill)
-      },
-      {
-        title: 'provider',
-        path: '/dashboard/eventsetup/provider',
-        icon: getIcon(calendarFill)
-      },
-      {
-        title: 'venue',
-        path: '/dashboard/eventsetup/venue',
-        icon: getIcon(ArchiveFill)
-      }
-    ]
+    title: 'Event Type',
+    path: '/dashboard/eventsetup/eventtype',
+    icon: getIcon(fileTextFill)
+  },
+  {
+    title: 'Provider Category',
+    path: '/dashboard/eventsetup/providercategory',
+    icon: getIcon(ArchiveFill)
+  },
+  {
+    title: 'provider',
+    path: '/dashboard/eventsetup/provider',
+    icon: getIcon(calendarFill)
+  },
+  {
+    title: 'venue',
+    path: '/dashboard/eventsetup/venue',
+    icon: getIcon(ArchiveFill)
   },
   {
     title: 'Plan Event',
@@ -72,22 +80,9 @@ const sidebarConfig = [
     title: 'Logs',
     path: '/dashboard/logs',
     icon: getIcon(bookOpenFill)
-  },
-  {
-    title: 'login',
-    path: '/login',
-    icon: getIcon(lockFill)
-  },
-  {
-    title: 'register',
-    path: '/register',
-    icon: getIcon(personAddFill)
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: getIcon(alertTriangleFill)
   }
 ];
+
+const sidebarConfig = adminConfig;
 
 export default sidebarConfig;

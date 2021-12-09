@@ -3,8 +3,8 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/login/Login';
+import Register from './pages/registration/Register';
 import DashboardApp from './pages/DashboardApp';
 import User from './pages/User';
 import NotFound from './pages/Page404';

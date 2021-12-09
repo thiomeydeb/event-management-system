@@ -16,6 +16,7 @@ import {
   FormControlLabel
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { loginSchema } from '../../../pages/login/validation/login';
 
 // ----------------------------------------------------------------------
 
@@ -23,20 +24,19 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required')
-  });
-
   const formik = useFormik({
     initialValues: {
-      email: '',
+      userName: '',
       password: '',
       remember: true
     },
-    validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    validationSchema: loginSchema,
+    onSubmit: (values) => {
+      localStorage.removeItem('role');
+      localStorage.setItem('role', values.userName);
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 300);
     }
   });
 
@@ -53,11 +53,10 @@ export default function LoginForm() {
           <TextField
             fullWidth
             autoComplete="username"
-            type="email"
-            label="Email address"
-            {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            label="Username"
+            {...getFieldProps('userName')}
+            error={Boolean(touched.userName && errors.userName)}
+            helperText={touched.userName && errors.userName}
           />
 
           <TextField

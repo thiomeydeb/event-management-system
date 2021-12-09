@@ -92,27 +92,6 @@ export default function PlanEvent() {
           <Typography variant="h4" gutterBottom>
             {viewMode ? 'Plan Event' : 'Add Event'}
           </Typography>
-          <Button
-            variant="contained"
-            color="warning"
-            style={{ marginLeft: 'auto' }}
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={editFill} />}
-            onClick={() => setViewMode('edit')}
-          >
-            Edit Event
-          </Button>
-          &nbsp;&nbsp;&nbsp;
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-            onClick={() => setViewMode('add')}
-          >
-            New Event
-          </Button>
         </Stack>
         <Card>
           <Scrollbar>

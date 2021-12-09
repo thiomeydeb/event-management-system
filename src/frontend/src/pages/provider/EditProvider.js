@@ -113,7 +113,7 @@ export default function EditProviderForm({
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Event title"
+            label="Provider title"
             margin="dense"
             {...getFieldProps('title')}
             error={Boolean(touched.title && errors.title)}

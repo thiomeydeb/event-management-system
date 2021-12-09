@@ -84,11 +84,11 @@ export default function Event() {
     setViewMode('edit');
   };
   return (
-    <Page title="Event | POSH Events">
+    <Page title="Provider | POSH Events">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={7}>
           <Typography variant="h4" gutterBottom>
-            {viewMode ? 'Provider' : 'Add Event'}
+            {viewMode ? 'Provider' : 'Add Provider'}
           </Typography>
           <Button
             variant="contained"
@@ -99,7 +99,7 @@ export default function Event() {
             startIcon={<Icon icon={editFill} />}
             onClick={() => setViewMode('edit')}
           >
-            Edit Event
+            Edit Provider
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Button
@@ -109,7 +109,7 @@ export default function Event() {
             startIcon={<Icon icon={plusFill} />}
             onClick={() => setViewMode('add')}
           >
-            New Event
+            New Provider
           </Button>
         </Stack>
         <Card>

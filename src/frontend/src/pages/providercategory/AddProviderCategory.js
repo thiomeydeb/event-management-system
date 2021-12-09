@@ -57,7 +57,7 @@ export default function AddProviderCategoryForm({
         <Stack spacing={3}>
           <TextField
             fullWidth
-            label="Event Category Name"
+            label="Provider Category Name"
             margin="dense"
             {...getFieldProps('name')}
             error={Boolean(touched.name && errors.name)}
@@ -65,7 +65,7 @@ export default function AddProviderCategoryForm({
           />
           <TextField
             fullWidth
-            label="Event Category Code"
+            label="Provider Category Code"
             margin="dense"
             {...getFieldProps('code')}
             error={Boolean(touched.code && errors.code)}

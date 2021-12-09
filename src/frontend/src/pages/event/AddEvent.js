@@ -97,8 +97,6 @@ export default function AddEvent({ setViewMode, setAlertOptions, url, getEvents 
     })
       .then((res) => {
         const providers = res.data.data;
-        const venues = _.filter(providers, ['providerCategory.code', 'venue']);
-        setVenues(venues);
 
         const entertainment = _.filter(providers, ['providerCategory.code', 'entertainment']);
         setEntertainment(entertainment);
